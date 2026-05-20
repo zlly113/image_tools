@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多功能图片处理工作站 Pro</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0f172a',
+                        darkCard: 'rgba(30, 41, 59, 0.7)',
+                        darkBorder: '#334155',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- CDN Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+    <style>
+        .checkerboard {
+            background-image:
+                linear-gradient(45deg, rgba(128,128,128,0.2) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(128,128,128,0.2) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(128,128,128,0.2) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(128,128,128,0.2) 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .drag-active {
+            border-color: #818cf8 !important;
+            background-color: rgba(99, 102, 241, 0.1) !important;
+            transform: scale(1.01);
+            transition: all 0.2s ease-in-out;
+        }
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        
+        /* Input range styling */
+        input[type=range] {
+            accent-color: #6366f1;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-200 min-h-screen font-sans transition-colors duration-300">
+
+<!-- 顶部导航与主题切换 -->
+<div class="fixed top-4 right-4 z-50">
+    <button id="themeToggleBtn" class="p-2 rounded-full bg-white dark:bg-slate-800 shadow-lg border border-gray-200 dark:border-darkBorder text-gray-600 dark:text-gray-300 hover:scale-110 transition-transform">
+        <!-- Sun/Moon Icon -->
+        <svg id="themeIconLight" class="w-6 h-6 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+        <svg id="themeIconDark" class="w-6 h-6 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+    </button>
+</div>
+
+<div class="max-w-6xl mx-auto pt-12 pb-20 px-4">
+    <!-- 头部 -->
+    <div class="text-center mb-10">
+        <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600 mb-3 tracking-tight">多功能图片处理工作站 Pro</h1>
+        <p class="text-gray-500 dark:text-gray-400">完全本地处理，保护隐私，搭载强悍的渲染引擎与批处理能力</p>
+    </div>
+
+    <!-- 选项卡导航 -->
+    <div class="flex justify-center mb-8">
+        <div class="bg-white/80 dark:bg-slate-800/80 glass-panel rounded-xl p-1.5 shadow-sm border border-gray-200 dark:border-darkBorder inline-flex flex-wrap justify-center gap-1">
+            <button onclick="switchTab('bg-remover')" id="tab-bg-remover" class="px-6 py-2.5 rounded-lg font-medium text-sm transition-all bg-indigo-600 text-white shadow">
+                智能证件照制作
+            </button>
+            <button onclick="switchTab('collage')" id="tab-collage" class="px-6 py-2.5 rounded-lg font-medium text-sm transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700">
+                高级排版与水印
+            </button>
+            <button onclick="switchTab('converter')" id="tab-converter" class="px-6 py-2.5 rounded-lg font-medium text-sm transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700">
+                批量格式转换
+            </button>
+            <button onclick="switchTab('enhancer')" id="tab-enhancer" class="px-6 py-2.5 rounded-lg font-medium text-sm transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700">
+                高级滤镜修复
+            </button>
+        </div>
+    </div>
+
+    <!-- 功能区容器 -->
+    <div class="bg-white/90 dark:bg-darkCard glass-panel rounded-2xl shadow-2xl border border-gray-200 dark:border-darkBorder overflow-hidden relative min-h-[700px]">
+        
+        <!-- ==================== 功能 1：去底色功能区 ==================== -->
+        <div id="section-bg-remover" class="p-6 md:p-8 block">
+            <div class="mb-6 border-b border-gray-200 dark:border-slate-700 pb-4">
+                <h2 class="text-2xl font-bold dark:text-white">智能抠图与证件照制作</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">交互式抠除纯色背景，支持一键替换红蓝白底色或自定义图片背景。</p>
+            </div>
+
+            <!-- 步骤 1 -->
+            <div class="mb-6">
+                <label class="block text-sm font-semibold mb-2">1. 上传原图</label>
+                <div id="bgDropZone" class="w-full md:w-1/2 border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl p-8 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                    <svg class="w-10 h-10 mx-auto text-indigo-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">点击选择或将图片拖拽至此</p>
+                    <input type="file" id="bgImageInput" accept="image/*" class="hidden"/>
+                </div>
+            </div>
+
+            <!-- 步骤 2 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 bg-gray-50 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-700">
+                <div>
+                    <label class="block text-sm font-semibold mb-2">去除模式</label>
+                    <select id="bgModeSelect" class="block w-full border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                        <option value="floodfill">边缘智能去底 (保留内部颜色)</option>
+                        <option value="all">强制去除所有相近颜色</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">去底基准色 <span class="text-xs font-normal text-gray-400">(点击预览图取色)</span></label>
+                    <div class="flex items-center gap-2 mt-1 py-1.5 bg-white dark:bg-slate-700 px-3 border border-gray-300 dark:border-slate-600 rounded-lg h-[42px]">
+                        <div id="bgColorIndicator" class="w-6 h-6 rounded border border-gray-300 dark:border-slate-500 bg-transparent transition-colors"></div>
+                        <span id="bgColorIndicatorHex" class="text-sm font-mono text-gray-600 dark:text-gray-300">自动 (左上角)</span>
+                        <button id="resetBgColorBtn" class="ml-auto text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 font-medium hidden">重置</button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2 flex justify-between">
+                        <span>边缘容差值</span>
+                        <span id="bgToleranceValue" class="text-indigo-600 dark:text-indigo-400 font-mono">30</span>
+                    </label>
+                    <input type="range" id="bgToleranceRange" min="0" max="150" value="30" class="w-full h-2 bg-gray-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer mt-2">
+                </div>
+            </div>
+            
+            <!-- 步骤 3 背景替换 -->
+            <div class="mb-6 bg-gray-50 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-700">
+                <label class="block text-sm font-semibold mb-3">替换背景底色</label>
+                <div class="flex flex-wrap gap-3 items-center">
+                    <button class="bg-replace-btn active px-4 py-2 rounded-md border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm hover:bg-gray-50 dark:hover:bg-slate-600 ring-2 ring-indigo-500 ring-offset-1 dark:ring-offset-slate-800" data-bg="transparent">透明</button>
+                    <button class="bg-replace-btn px-4 py-2 rounded-md border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm hover:bg-gray-50 dark:hover:bg-slate-600" data-bg="white">白底</button>
+                    <button class="bg-replace-btn px-4 py-2 rounded-md border border-gray-300 dark:border-slate-600 bg-blue-600 text-white text-sm hover:bg-blue-700" data-bg="#2b73af">蓝底</button>
+                    <button class="bg-replace-btn px-4 py-2 rounded-md border border-gray-300 dark:border-slate-600 bg-red-600 text-white text-sm hover:bg-red-700" data-bg="#d9001b">红底</button>
+                    <button class="bg-replace-btn px-4 py-2 rounded-md border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm hover:bg-gray-50 dark:hover:bg-slate-600 relative overflow-hidden">
+                        自定义图片...
+                        <input type="file" id="bgCustomImageInput" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                    </button>
+                </div>
+            </div>
+
+            <!-- 预览区 -->
+            <div class="mb-6">
+                <label class="block text-sm font-semibold mb-2">交互式预览区 (可点击图片重新取色)</label>
+                <div class="w-full border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl overflow-hidden flex justify-center items-center bg-gray-100 dark:bg-slate-900 checkerboard min-h-[400px] relative">
+                    <canvas id="bgPreviewCanvas" class="max-w-full max-h-[500px] object-contain hidden"></canvas>
+                    <div id="bgPlaceholder" class="text-gray-400 dark:text-gray-500 flex flex-col items-center">
+                        <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span>暂无图片</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 下载按钮 -->
+            <div class="flex justify-center">
+                <button id="bgDownloadBtn" disabled class="bg-indigo-600 text-white font-bold py-3 px-10 rounded-xl shadow-lg hover:bg-indigo-700 hover:shadow-indigo-500/30 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:-translate-y-1">
+                    保存最终图片
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== 功能 2：多图拼接功能区 ==================== -->
+        <div id="section-collage" class="p-6 md:p-8 hidden">
+            <div class="mb-6 border-b border-gray-200 dark:border-slate-700 pb-4">
+                <h2 class="text-2xl font-bold dark:text-white">高级相片排版与胶片水印</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">支持拖拽排序、自由布局，并自动提取 EXIF 信息生成徕卡风格胶片边框水印。</p>
+            </div>
+
+            <div class="flex flex-col xl:flex-row gap-8">
+                <!-- 左侧：控制面板 -->
+                <div class="w-full xl:w-1/3 flex flex-col gap-6">
+                    
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">1. 拖拽添加多图</label>
+                        <div id="collageDropZone" class="w-full border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl p-6 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors relative">
+                            <p class="text-sm text-indigo-500 dark:text-indigo-400 font-medium mb-1">点击或拖拽图片至此</p>
+                            <p class="text-xs text-gray-400">支持多选</p>
+                            <input type="file" id="collageInput" accept="image/*" multiple class="absolute inset-0 opacity-0 cursor-pointer w-full h-full"/>
+                        </div>
+                    </div>
+                    
+                    <!-- 缩略图排序区 -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 flex justify-between">
+                            <span>2. 拖动排序与管理</span>
+                            <span id="collageCountText" class="text-gray-500 text-xs">已选择: 0 张</span>
+                        </label>
+                        <div id="collageThumbnails" class="flex flex-wrap gap-2 min-h-[60px] p-2 bg-gray-50 dark:bg-slate-800/50 rounded-lg border border-gray-200 dark:border-slate-700">
+                            <p class="text-xs text-gray-400 w-full text-center my-auto" id="collageThumbEmpty">无图片</p>
+                            <!-- 缩略图由 JS 动态生成 -->
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">3. 排版布局</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="layout" value="vertical" class="peer sr-only" checked>
+                                <div class="p-3 border border-gray-200 dark:border-slate-600 rounded-lg text-center hover:bg-gray-50 dark:hover:bg-slate-700 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/30 transition-colors">
+                                    <span class="text-sm font-medium">垂直长图</span>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="layout" value="horizontal" class="peer sr-only">
+                                <div class="p-3 border border-gray-200 dark:border-slate-600 rounded-lg text-center hover:bg-gray-50 dark:hover:bg-slate-700 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/30 transition-colors">
+                                    <span class="text-sm font-medium">水平横图</span>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer col-span-2">
+                                <input type="radio" name="layout" value="grid" class="peer sr-only">
+                                <div class="p-3 border border-gray-200 dark:border-slate-600 rounded-lg text-center hover:bg-gray-50 dark:hover:bg-slate-700 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/30 transition-colors">
+                                    <span class="text-sm font-medium">智能网格居中铺满</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 参数设置 -->
+                    <div class="space-y-4 bg-gray-50 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-700">
+                        <!-- EXIF 水印开关 -->
+                        <div class="flex items-center justify-between border-b border-gray-200 dark:border-slate-600 pb-4">
+                            <div>
+                                <h4 class="text-sm font-semibold">徕卡风 EXIF 水印</h4>
+                                <p class="text-xs text-gray-500 mt-1">自动提取相机参数生成底部边框</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="exifToggle" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-slate-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-500"></div>
+                            </label>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold mb-1 flex justify-between">
+                                <span>图片间距</span>
+                                <span id="spacingValue" class="text-indigo-500 font-mono">20px</span>
+                            </label>
+                            <input type="range" id="spacingRange" min="0" max="100" value="20" class="w-full h-1.5 bg-gray-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-1 flex justify-between">
+                                <span>图片圆角</span>
+                                <span id="radiusValue" class="text-indigo-500 font-mono">0px</span>
+                            </label>
+                            <input type="range" id="radiusRange" min="0" max="100" value="0" class="w-full h-1.5 bg-gray-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">画板背景颜色</label>
+                            <div class="flex items-center gap-3">
+                                <input type="color" id="bgColorPickerCollage" value="#ffffff" class="h-9 w-12 rounded cursor-pointer border-0 p-0">
+                                <span id="bgColorHexCollage" class="text-sm font-mono uppercase">#FFFFFF</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="collageDownloadBtn" disabled class="w-full bg-indigo-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg hover:bg-indigo-700 hover:shadow-indigo-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:-translate-y-1 mt-auto">
+                        保存排版长图
+                    </button>
+                </div>
+
+                <!-- 右侧：预览区 -->
+                <div class="w-full xl:w-2/3 flex flex-col">
+                    <label class="block text-sm font-semibold mb-2">生成预览</label>
+                    <div class="flex-grow border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl bg-gray-100 dark:bg-slate-900 flex justify-center items-start p-4 overflow-auto no-scrollbar relative min-h-[500px]">
+                        <canvas id="collageCanvas" class="hidden shadow-xl max-w-full max-h-[700px] object-contain transition-all"></canvas>
+                        <div id="collagePlaceholder" class="text-gray-400 flex flex-col items-center justify-center h-full w-full absolute inset-0">
+                            <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <span>请在左侧上传并排列图片</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 功能 3：尺寸与格式转换功能区 ==================== -->
+        <div id="section-converter" class="p-6 md:p-8 hidden">
+            <div class="mb-6 border-b border-gray-200 dark:border-slate-700 pb-4">
+                <h2 class="text-2xl font-bold dark:text-white">多任务批量格式转换</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">支持拖拽导入多张图片，纯本地异步批量转换尺寸与格式，自动打包导出 ZIP。</p>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- 左侧：控制面板 -->
+                <div class="w-full md:w-1/3 flex flex-col gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">1. 导入处理队列</label>
+                        <div id="convertDropZone" class="w-full border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl p-6 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors relative">
+                            <p class="text-sm text-indigo-500 dark:text-indigo-400 font-medium mb-1">批量拖拽图片至此</p>
+                            <input type="file" id="convertInput" accept="image/*" multiple class="absolute inset-0 opacity-0 cursor-pointer w-full h-full"/>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2" id="convertQueueStatus">队列为空</p>
+                    </div>
+
+                    <div class="bg-gray-50 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-700">
+                        <label class="block text-sm font-semibold mb-3">2. 统一修改分辨率</label>
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="flex-1">
+                                <label class="text-xs text-gray-500 mb-1 block">宽度 (px)</label>
+                                <input type="number" id="convertWidth" class="w-full border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500" disabled>
+                            </div>
+                            <div class="text-gray-400 mt-5">×</div>
+                            <div class="flex-1">
+                                <label class="text-xs text-gray-500 mb-1 block">高度 (px)</label>
+                                <input type="number" id="convertHeight" class="w-full border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500" disabled>
+                            </div>
+                        </div>
+                        <label class="flex items-center gap-2 cursor-pointer mt-1">
+                            <input type="checkbox" id="lockRatio" checked class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer bg-slate-700 border-slate-500">
+                            <span class="text-sm">锁定长宽比 (仅限首图参考)</span>
+                        </label>
+                    </div>
+
+                    <div class="bg-gray-50 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-700">
+                        <label class="block text-sm font-semibold mb-3">3. 统一导出设置</label>
+                        <div class="mb-4">
+                            <label class="text-xs text-gray-500 mb-1 block">目标格式</label>
+                            <select id="formatSelect" class="block w-full border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm cursor-pointer">
+                                <option value="image/jpeg" selected>JPG (体积较小, 自动加白底)</option>
+                                <option value="image/png">PNG (支持透明底, 无损保存)</option>
+                                <option value="image/webp">WEBP (体积极小, 网页优选)</option>
+                            </select>
+                        </div>
+                        <div id="qualityControl">
+                            <label class="block text-xs font-semibold mb-1 flex justify-between">
+                                <span>JPG/WEBP 画质控制</span>
+                                <span id="qualityValue" class="text-indigo-500 font-mono">90%</span>
+                            </label>
+                            <input type="range" id="qualityRange" min="10" max="100" value="90" class="w-full h-1.5 bg-gray-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer mt-2">
+                        </div>
+                    </div>
+
+                    <button id="convertDownloadBtn" disabled class="w-full bg-indigo-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg hover:bg-indigo-700 hover:shadow-indigo-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:-translate-y-1 mt-auto">
+                        批量转换并下载 ZIP
+                    </button>
+                </div>
+
+                <!-- 右侧：首图预览区 -->
+                <div class="w-full md:w-2/3 flex flex-col">
+                    <label class="block text-sm font-semibold mb-2 flex justify-between">
+                        <span>首图实时渲染预览</span>
+                        <span id="convertOriginalSize" class="text-xs text-gray-500 font-mono"></span>
+                    </label>
+                    <div class="flex-grow border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl bg-gray-100 dark:bg-slate-900 flex justify-center items-center p-4 overflow-hidden relative min-h-[400px] checkerboard">
+                        <img id="convertPreviewImg" class="max-w-full max-h-[500px] object-contain hidden shadow-xl border border-gray-200 dark:border-slate-700 transition-opacity">
+                        <canvas id="convertCanvas" class="hidden"></canvas>
+                        <div id="convertPlaceholder" class="text-gray-400 flex flex-col items-center justify-center h-full w-full absolute inset-0">
+                            <svg class="w-12 h-12 mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <span>预览首张图片压缩效果</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 功能 4：老照片修复与模糊高清化功能区 ==================== -->
+        <div id="section-enhancer" class="p-6 md:p-8 hidden">
+            <div class="mb-6 border-b border-gray-200 dark:border-slate-700 pb-4">
+                <h2 class="text-2xl font-bold dark:text-white">高级滤镜与画质修复工作室</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">预设多款电影级滤镜，配备极速双通道渲染管线实现实时高清锐化计算。</p>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- 左侧：控制面板 -->
+                <div class="w-full md:w-1/3 flex flex-col gap-5">
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">1. 导入待处理图像</label>
+                        <div id="enhanceDropZone" class="w-full border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl p-4 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors relative">
+                            <p class="text-sm text-indigo-500 dark:text-indigo-400 font-medium">点击或拖拽上传</p>
+                            <input type="file" id="enhanceInput" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full"/>
+                        </div>
+                    </div>
+
+                    <!-- 高级滤镜预设 -->
+                    <div class="bg-gray-50 dark:bg-slate-800/50 p-4 rounded-xl border border-gray-100 dark:border-slate-700">
+                        <label class="block text-sm font-semibold mb-3">2. 高级滤镜预设</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button class="filter-preset active text-xs py-2 px-1 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-gray-100 dark:hover:bg-slate-600 ring-2 ring-indigo-500 ring-offset-1 dark:ring-offset-slate-800" data-filter="none">原图</button>
+                            <button class="filter-preset text-xs py-2 px-1 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-gray-100 dark:hover:bg-slate-600" data-filter="vintage">复古胶片</button>
+                            <button class="filter-preset text-xs py-2 px-1 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-gray-100 dark:hover:bg-slate-600" data-filter="grayscale">经典黑白</button>
+                            <button class="filter-preset text-xs py-2 px-1 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-gray-100 dark:hover:bg-slate-600" data-filter="cool">冷调赛博</button>
+                            <button class="filter-preset text-xs py-2 px-1 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-gray-100 dark:hover:bg-slate-600" data-filter="warm">暖秋时光</button>
+                            <button class="filter-preset text-xs py-2 px-1 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 hover:bg-gray-100 dark:hover:bg-slate-600" data-filter="highcontrast">极度锐丽</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-700 space-y-4">
+                        <label class="block text-sm font-semibold mb-1">3. 基础参数微调</label>
+                        <div>
+                            <label class="block text-xs mb-1 flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">亮度</span>
+                                <span id="valBrightness" class="text-indigo-500 font-mono">100%</span>
+                            </label>
+                            <input type="range" id="rangeBrightness" min="50" max="150" value="100" class="w-full h-1.5 bg-gray-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        <div>
+                            <label class="block text-xs mb-1 flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">对比度</span>
+                                <span id="valContrast" class="text-indigo-500 font-mono">100%</span>
+                            </label>
+                            <input type="range" id="rangeContrast" min="50" max="200" value="100" class="w-full h-1.5 bg-gray-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        <div>
+                            <label class="block text-xs mb-1 flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">饱和度</span>
+                                <span id="valSaturation" class="text-indigo-500 font-mono">100%</span>
+                            </label>
+                            <input type="range" id="rangeSaturation" min="0" max="200" value="100" class="w-full h-1.5 bg-gray-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        <div class="pt-3 border-t border-gray-200 dark:border-slate-600">
+                            <label class="block text-xs font-semibold mb-1 flex justify-between">
+                                <span>智能卷积边缘锐化</span>
+                                <span id="valSharpen" class="text-indigo-500 font-mono font-bold">0</span>
+                            </label>
+                            <input type="range" id="rangeSharpen" min="0" max="100" value="0" class="w-full h-1.5 bg-indigo-200 dark:bg-indigo-900 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                    </div>
+
+                    <button id="enhanceDownloadBtn" disabled class="w-full bg-indigo-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg hover:bg-indigo-700 hover:shadow-indigo-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:-translate-y-1 mt-auto">
+                        保存超清大图
+                    </button>
+                </div>
+
+                <!-- 右侧：预览区 -->
+                <div class="w-full md:w-2/3 flex flex-col">
+                    <label class="block text-sm font-semibold mb-2">实时效果预览 (极速引擎)</label>
+                    <div class="flex-grow border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl bg-gray-100 dark:bg-slate-900 flex justify-center items-center p-4 overflow-hidden relative min-h-[400px] checkerboard">
+                        <canvas id="enhancePreviewCanvas" class="max-w-full max-h-[550px] object-contain hidden shadow-2xl border border-gray-200 dark:border-slate-700"></canvas>
+                        <div id="enhancePlaceholder" class="text-gray-400 flex flex-col items-center justify-center h-full w-full absolute inset-0">
+                            <svg class="w-12 h-12 mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <span>上传照片感受魔法</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // 全局工具与主题切换
+    // ==========================================
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const htmlEl = document.documentElement;
+    themeToggleBtn.addEventListener('click', () => {
+        htmlEl.classList.toggle('dark');
+    });
+
+    function rgbToHex(r, g, b) {
+        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+    }
+
+    // 拖拽高亮效果绑定
+    function bindDragAndDrop(dropZoneId, inputId) {
+        const dropZone = document.getElementById(dropZoneId);
+        const input = document.getElementById(inputId);
+        if(!dropZone || !input) return;
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-active'), false);
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-active'), false);
+        });
+        dropZone.addEventListener('drop', (e) => {
+            input.files = e.dataTransfer.files;
+            input.dispatchEvent(new Event('change'));
+        });
+    }
+
+    bindDragAndDrop('bgDropZone', 'bgImageInput');
+    bindDragAndDrop('collageDropZone', 'collageInput');
+    bindDragAndDrop('convertDropZone', 'convertInput');
+    bindDragAndDrop('enhanceDropZone', 'enhanceInput');
+
+    function switchTab(tabId) {
+        const tabs = [
+            { id: 'bg-remover' }, { id: 'collage' }, { id: 'converter' }, { id: 'enhancer' }
+        ];
+        tabs.forEach(tab => {
+            const btn = document.getElementById(`tab-${tab.id}`);
+            const section = document.getElementById(`section-${tab.id}`);
+            if(btn && section) {
+                btn.className = "px-6 py-2.5 rounded-lg font-medium text-sm transition-all text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700";
+                section.classList.add('hidden');
+                section.classList.remove('block');
+            }
+        });
+        const activeBtn = document.getElementById(`tab-${tabId}`);
+        const activeSection = document.getElementById(`section-${tabId}`);
+        if(activeBtn && activeSection) {
+            activeBtn.className = "px-6 py-2.5 rounded-lg font-medium text-sm transition-all bg-indigo-600 text-white shadow";
+            activeSection.classList.remove('hidden');
+            activeSection.classList.add('block');
+        }
+    }
+
+    // ==========================================
+    // 功能 1：去底色逻辑与背景替换
+    // ==========================================
+    const bgImageInput = document.getElementById('bgImageInput');
+    const bgModeSelect = document.getElementById('bgModeSelect');
+    const bgToleranceRange = document.getElementById('bgToleranceRange');
+    const bgToleranceValue = document.getElementById('bgToleranceValue');
+    const bgPreviewCanvas = document.getElementById('bgPreviewCanvas');
+    const bgCtx = bgPreviewCanvas ? bgPreviewCanvas.getContext('2d') : null;
+    const bgPlaceholder = document.getElementById('bgPlaceholder');
+    const bgDownloadBtn = document.getElementById('bgDownloadBtn');
+    
+    const bgColorIndicator = document.getElementById('bgColorIndicator');
+    const bgColorIndicatorHex = document.getElementById('bgColorIndicatorHex');
+    const resetBgColorBtn = document.getElementById('resetBgColorBtn');
+    
+    const bgReplaceBtns = document.querySelectorAll('.bg-replace-btn');
+    const bgCustomImageInput = document.getElementById('bgCustomImageInput');
+
+    let originalBgImage = null;
+    let originalBgImageCanvas = null;
+    let originalBgImageCtx = null;
+    let customBgColor = null; 
+    let activeReplaceBg = 'transparent'; // hex, 'transparent', or Image object
+
+    // 背景替换按钮监听
+    bgReplaceBtns.forEach(btn => {
+        if(btn.querySelector('input')) return; // Custom file input handled separately
+        btn.addEventListener('click', (e) => {
+            bgReplaceBtns.forEach(b => {
+                b.classList.remove('ring-2', 'ring-indigo-500', 'ring-offset-1', 'dark:ring-offset-slate-800');
+            });
+            btn.classList.add('ring-2', 'ring-indigo-500', 'ring-offset-1', 'dark:ring-offset-slate-800');
+            activeReplaceBg = btn.getAttribute('data-bg');
+            processBgImage();
+        });
+    });
+
+    if(bgCustomImageInput) {
+        bgCustomImageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    activeReplaceBg = img;
+                    bgReplaceBtns.forEach(b => b.classList.remove('ring-2', 'ring-indigo-500', 'ring-offset-1', 'dark:ring-offset-slate-800'));
+                    bgCustomImageInput.parentElement.classList.add('ring-2', 'ring-indigo-500', 'ring-offset-1', 'dark:ring-offset-slate-800');
+                    processBgImage();
+                };
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function updateBgColorUI() {
+        if (!bgColorIndicator || !bgColorIndicatorHex) return;
+        if (customBgColor) {
+            const hex = rgbToHex(customBgColor.r, customBgColor.g, customBgColor.b);
+            bgColorIndicator.style.backgroundColor = hex;
+            bgColorIndicatorHex.textContent = hex;
+            if (resetBgColorBtn) resetBgColorBtn.classList.remove('hidden');
+        } else {
+            if (originalBgImageCtx) {
+                const firstPixel = originalBgImageCtx.getImageData(0, 0, 1, 1).data;
+                const hex = rgbToHex(firstPixel[0], firstPixel[1], firstPixel[2]);
+                bgColorIndicator.style.backgroundColor = hex;
+                bgColorIndicatorHex.textContent = `${hex} (自动)`;
+            } else {
+                bgColorIndicator.style.backgroundColor = 'transparent';
+                bgColorIndicatorHex.textContent = '自动 (左上角)';
+            }
+            if (resetBgColorBtn) resetBgColorBtn.classList.add('hidden');
+        }
+    }
+
+    if(bgImageInput) {
+        bgImageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => { 
+                    originalBgImage = img;
+                    originalBgImageCanvas = document.createElement('canvas');
+                    originalBgImageCanvas.width = img.width;
+                    originalBgImageCanvas.height = img.height;
+                    originalBgImageCtx = originalBgImageCanvas.getContext('2d');
+                    originalBgImageCtx.drawImage(img, 0, 0);
+                    
+                    customBgColor = null;
+                    if (bgPreviewCanvas) bgPreviewCanvas.classList.add('cursor-crosshair');
+                    
+                    updateBgColorUI();
+                    processBgImage(); 
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    if(bgPreviewCanvas) {
+        bgPreviewCanvas.addEventListener('click', (e) => {
+            if (!originalBgImage || !originalBgImageCtx) return;
+            const rect = bgPreviewCanvas.getBoundingClientRect();
+            const scaleX = originalBgImage.width / rect.width;
+            const scaleY = originalBgImage.height / rect.height;
+            const clickX = Math.floor((e.clientX - rect.left) * scaleX);
+            const clickY = Math.floor((e.clientY - rect.top) * scaleY);
+            
+            const x = Math.max(0, Math.min(originalBgImage.width - 1, clickX));
+            const y = Math.max(0, Math.min(originalBgImage.height - 1, clickY));
+            
+            const pixel = originalBgImageCtx.getImageData(x, y, 1, 1).data;
+            customBgColor = { r: pixel[0], g: pixel[1], b: pixel[2] };
+            
+            updateBgColorUI();
+            processBgImage();
+        });
+    }
+
+    if(resetBgColorBtn) {
+        resetBgColorBtn.addEventListener('click', () => {
+            customBgColor = null;
+            updateBgColorUI();
+            processBgImage();
+        });
+    }
+
+    if(bgModeSelect) bgModeSelect.addEventListener('change', processBgImage);
+    if(bgToleranceRange) {
+        bgToleranceRange.addEventListener('input', (e) => {
+            if(bgToleranceValue) bgToleranceValue.textContent = e.target.value;
+        });
+        bgToleranceRange.addEventListener('change', processBgImage);
+    }
+
+    function processBgImage() {
+        if (!originalBgImage || !bgCtx || !bgPreviewCanvas) return;
+
+        bgPreviewCanvas.classList.remove('hidden');
+        if(bgPlaceholder) bgPlaceholder.classList.add('hidden');
+        if(bgDownloadBtn) bgDownloadBtn.disabled = false;
+
+        const width = originalBgImage.width;
+        const height = originalBgImage.height;
+        bgPreviewCanvas.width = width;
+        bgPreviewCanvas.height = height;
+
+        // Draw active background
+        bgCtx.clearRect(0, 0, width, height);
+        if (activeReplaceBg === 'transparent') {
+            // keep clear
+        } else if (typeof activeReplaceBg === 'string') {
+            bgCtx.fillStyle = activeReplaceBg;
+            bgCtx.fillRect(0, 0, width, height);
+        } else {
+            // Draw custom image cover
+            const imgRatio = activeReplaceBg.width / activeReplaceBg.height;
+            const canvasRatio = width / height;
+            let drawW = width, drawH = height, drawX = 0, drawY = 0;
+            if (imgRatio > canvasRatio) {
+                drawH = height; drawW = height * imgRatio; drawX = (width - drawW) / 2;
+            } else {
+                drawW = width; drawH = width / imgRatio; drawY = (height - drawH) / 2;
+            }
+            bgCtx.drawImage(activeReplaceBg, drawX, drawY, drawW, drawH);
+        }
+
+        // Get processed foreground
+        const fgCanvas = document.createElement('canvas');
+        fgCanvas.width = width; fgCanvas.height = height;
+        const fgCtx = fgCanvas.getContext('2d');
+        fgCtx.drawImage(originalBgImage, 0, 0);
+        
+        const imageData = fgCtx.getImageData(0, 0, width, height);
+        const data = imageData.data;
+        const tolerance = parseInt(bgToleranceRange ? bgToleranceRange.value : 30, 10);
+        const mode = bgModeSelect ? bgModeSelect.value : 'floodfill';
+
+        let bgR = data[0], bgG = data[1], bgB = data[2];
+        if (customBgColor) {
+            bgR = customBgColor.r; bgG = customBgColor.g; bgB = customBgColor.b;
+        }
+
+        const isBgColor = (idx) => {
+            return Math.abs(data[idx] - bgR) <= tolerance &&
+                   Math.abs(data[idx+1] - bgG) <= tolerance &&
+                   Math.abs(data[idx+2] - bgB) <= tolerance &&
+                   data[idx+3] > 0;
+        };
+
+        if (mode === 'all') {
+            for (let i = 0; i < data.length; i += 4) {
+                if (isBgColor(i)) data[i+3] = 0;
+            }
+        } else {
+            const visited = new Uint8Array(width * height);
+            const stack = [];
+
+            for (let x = 0; x < width; x++) {
+                let t = 0 * width + x; if (isBgColor(t * 4)) { stack.push(t); visited[t] = 1; }
+                let b = (height - 1) * width + x; if (isBgColor(b * 4)) { stack.push(b); visited[b] = 1; }
+            }
+            for (let y = 0; y < height; y++) {
+                let l = y * width + 0; if (isBgColor(l * 4)) { stack.push(l); visited[l] = 1; }
+                let r = y * width + (width - 1); if (isBgColor(r * 4)) { stack.push(r); visited[r] = 1; }
+            }
+
+            while (stack.length > 0) {
+                const curr = stack.pop();
+                const cx = curr % width;
+                const cy = Math.floor(curr / width);
+
+                data[curr * 4 + 3] = 0;
+
+                if (cx > 0) { let left = curr - 1; if (!visited[left] && isBgColor(left * 4)) { visited[left] = 1; stack.push(left); } }
+                if (cx < width - 1) { let right = curr + 1; if (!visited[right] && isBgColor(right * 4)) { visited[right] = 1; stack.push(right); } }
+                if (cy > 0) { let top = curr - width; if (!visited[top] && isBgColor(top * 4)) { visited[top] = 1; stack.push(top); } }
+                if (cy < height - 1) { let bottom = curr + width; if (!visited[bottom] && isBgColor(bottom * 4)) { visited[bottom] = 1; stack.push(bottom); } }
+            }
+        }
+        fgCtx.putImageData(imageData, 0, 0);
+        
+        // Composite foreground over background
+        bgCtx.drawImage(fgCanvas, 0, 0);
+    }
+
+    if(bgDownloadBtn) {
+        bgDownloadBtn.addEventListener('click', () => {
+            if (!originalBgImage || !bgPreviewCanvas) return;
+            const link = document.createElement('a');
+            const format = activeReplaceBg === 'transparent' ? 'image/png' : 'image/jpeg';
+            const ext = format === 'image/png' ? 'png' : 'jpg';
+            link.href = bgPreviewCanvas.toDataURL(format, 0.95);
+            link.download = `证件照合成_${Date.now()}.${ext}`;
+            link.click();
+        });
+    }
+
+    // ==========================================
+    // 功能 2：多图拼接与胶片水印逻辑
+    // ==========================================
+    const collageInput = document.getElementById('collageInput');
+    const collageCountText = document.getElementById('collageCountText');
+    const collageThumbnails = document.getElementById('collageThumbnails');
+    const collageThumbEmpty = document.getElementById('collageThumbEmpty');
+    const layoutRadios = document.getElementsByName('layout');
+    const spacingRange = document.getElementById('spacingRange');
+    const spacingValue = document.getElementById('spacingValue');
+    const radiusRange = document.getElementById('radiusRange');
+    const radiusValue = document.getElementById('radiusValue');
+    const bgColorPickerCollage = document.getElementById('bgColorPickerCollage');
+    const bgColorHexCollage = document.getElementById('bgColorHexCollage');
+    const exifToggle = document.getElementById('exifToggle');
+    
+    const collageCanvas = document.getElementById('collageCanvas');
+    const collageCtx = collageCanvas ? collageCanvas.getContext('2d') : null;
+    const collagePlaceholder = document.getElementById('collagePlaceholder');
+    const collageDownloadBtn = document.getElementById('collageDownloadBtn');
+
+    let loadedImagesObj = []; // Array of { id, img, file, exifData }
+
+    function getExifData(file) {
+        return new Promise((resolve) => {
+            if (window.EXIF) {
+                EXIF.getData(file, function() {
+                    const make = EXIF.getTag(this, "Make") || "未知设备";
+                    const model = EXIF.getTag(this, "Model") || "";
+                    const fNumber = EXIF.getTag(this, "FNumber");
+                    const focalLength = EXIF.getTag(this, "FocalLength");
+                    const iso = EXIF.getTag(this, "ISOSpeedRatings");
+                    const exposureTime = EXIF.getTag(this, "ExposureTime");
+                    
+                    let apertureStr = fNumber ? `F${fNumber.valueOf()}` : "";
+                    let focalStr = focalLength ? `${focalLength.valueOf()}mm` : "";
+                    let isoStr = iso ? `ISO${iso}` : "";
+                    let exposureStr = exposureTime ? `1/${Math.round(1/exposureTime.valueOf())}s` : "";
+                    
+                    let params = [focalStr, apertureStr, exposureStr, isoStr].filter(v=>v).join("  ");
+                    
+                    resolve({ device: `${make} ${model}`.trim(), params });
+                });
+            } else {
+                resolve({ device: "未知设备", params: "" });
+            }
+        });
+    }
+
+    function renderThumbnails() {
+        if(loadedImagesObj.length > 0) {
+            collageThumbEmpty.style.display = 'none';
+        } else {
+            collageThumbEmpty.style.display = 'block';
+        }
+        
+        // Remove old thumbs except the empty text
+        Array.from(collageThumbnails.children).forEach(child => {
+            if(child.id !== 'collageThumbEmpty') child.remove();
+        });
+        
+        loadedImagesObj.forEach((item, index) => {
+            const thumb = document.createElement('div');
+            thumb.className = "w-14 h-14 relative rounded overflow-hidden cursor-move border border-gray-300 dark:border-slate-600 shadow-sm hover:ring-2 ring-indigo-500";
+            thumb.draggable = true;
+            thumb.dataset.index = index;
+            
+            const img = document.createElement('img');
+            img.src = item.img.src;
+            img.className = "w-full h-full object-cover";
+            
+            const delBtn = document.createElement('div');
+            delBtn.className = "absolute top-0 right-0 bg-red-500/80 text-white w-4 h-4 flex items-center justify-center text-[10px] cursor-pointer hover:bg-red-600 rounded-bl";
+            delBtn.innerHTML = "×";
+            delBtn.onclick = (e) => {
+                e.stopPropagation();
+                loadedImagesObj.splice(index, 1);
+                updateCollageState();
+            };
+            
+            thumb.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', index);
+                thumb.style.opacity = '0.5';
+            });
+            thumb.addEventListener('dragend', () => {
+                thumb.style.opacity = '1';
+            });
+            thumb.addEventListener('dragover', (e) => e.preventDefault());
+            thumb.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+                const toIdx = index;
+                if (fromIdx !== toIdx) {
+                    const movedItem = loadedImagesObj.splice(fromIdx, 1)[0];
+                    loadedImagesObj.splice(toIdx, 0, movedItem);
+                    updateCollageState();
+                }
+            });
+            
+            thumb.appendChild(img);
+            thumb.appendChild(delBtn);
+            collageThumbnails.appendChild(thumb);
+        });
+        
+        if(collageCountText) collageCountText.textContent = `已选择: ${loadedImagesObj.length} 张`;
+    }
+    
+    function updateCollageState() {
+        renderThumbnails();
+        drawCollage();
+    }
+
+    if(collageInput) {
+        collageInput.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+            
+            if(collageCountText) collageCountText.textContent = `加载中...`;
+
+            const readPromises = files.map(file => {
+                return new Promise(async (resolve) => {
+                    const reader = new FileReader();
+                    const exifData = await getExifData(file);
+                    
+                    reader.onload = (event) => {
+                        const img = new Image();
+                        img.onload = () => resolve({ id: Date.now()+Math.random(), img, file, exifData });
+                        img.src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            const newItems = await Promise.all(readPromises);
+            loadedImagesObj = loadedImagesObj.concat(newItems);
+            updateCollageState();
+        });
+    }
+
+    if(layoutRadios) Array.from(layoutRadios).forEach(radio => radio.addEventListener('change', drawCollage));
+    if(exifToggle) exifToggle.addEventListener('change', drawCollage);
+    if(spacingRange) spacingRange.addEventListener('input', (e) => { if(spacingValue) spacingValue.textContent = e.target.value + 'px'; drawCollage(); });
+    if(radiusRange) radiusRange.addEventListener('input', (e) => { if(radiusValue) radiusValue.textContent = e.target.value + 'px'; drawCollage(); });
+    if(bgColorPickerCollage) bgColorPickerCollage.addEventListener('input', (e) => { if(bgColorHexCollage) bgColorHexCollage.textContent = e.target.value.toUpperCase(); drawCollage(); });
+
+    function roundedImage(ctx, img, x, y, width, height, radius) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + width - radius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        ctx.lineTo(x + radius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(img, x, y, width, height);
+        ctx.restore();
+    }
+    
+    // 渲染徕卡风格底部水印
+    function drawExifWatermark(ctx, exifData, x, y, width, height) {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(x, y, width, height);
+        
+        ctx.fillStyle = "#1e1e1e";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        
+        const deviceFontSize = Math.max(16, width * 0.02);
+        ctx.font = `bold ${deviceFontSize}px sans-serif`;
+        ctx.fillText(exifData.device, x + width * 0.05, y + height / 2);
+        
+        ctx.textAlign = "right";
+        const paramFontSize = Math.max(14, width * 0.015);
+        ctx.font = `${paramFontSize}px sans-serif`;
+        ctx.fillStyle = "#555555";
+        ctx.fillText(exifData.params, x + width * 0.95, y + height / 2);
+    }
+
+    function drawCollage() {
+        if (!collageCtx || !collageCanvas) return;
+        if (loadedImagesObj.length === 0) {
+            collageCanvas.classList.add('hidden');
+            if(collagePlaceholder) collagePlaceholder.classList.remove('hidden');
+            if(collageDownloadBtn) collageDownloadBtn.disabled = true;
+            return;
+        }
+
+        collageCanvas.classList.remove('hidden');
+        if(collagePlaceholder) collagePlaceholder.classList.add('hidden');
+        if(collageDownloadBtn) collageDownloadBtn.disabled = false;
+
+        let layout = 'vertical';
+        if(layoutRadios) layoutRadios.forEach(r => { if(r.checked) layout = r.value; });
+        const spacing = parseInt(spacingRange ? spacingRange.value : 20, 10);
+        const radius = parseInt(radiusRange ? radiusRange.value : 0, 10);
+        const bgColor = bgColorPickerCollage ? bgColorPickerCollage.value : '#ffffff';
+        const withExif = exifToggle ? exifToggle.checked : false;
+
+        let finalWidth = 0, finalHeight = 0;
+        const padding = spacing;
+
+        if (layout === 'vertical') {
+            const targetWidth = 1000;
+            finalWidth = targetWidth + padding * 2;
+            finalHeight = padding;
+
+            const resizedImages = loadedImagesObj.map(item => {
+                const scale = targetWidth / item.img.width;
+                let height = item.img.height * scale;
+                let exifHeight = withExif ? Math.max(80, targetWidth * 0.08) : 0;
+                let itemTotalHeight = height + exifHeight;
+                finalHeight += itemTotalHeight + spacing;
+                return { img: item.img, exif: item.exifData, w: targetWidth, h: height, exifH: exifHeight, totalH: itemTotalHeight };
+            });
+
+            collageCanvas.width = finalWidth;
+            collageCanvas.height = finalHeight;
+            collageCtx.fillStyle = bgColor;
+            collageCtx.fillRect(0, 0, finalWidth, finalHeight);
+
+            let currentY = padding;
+            resizedImages.forEach(item => {
+                if (withExif) {
+                    // Draw combined rounded rect with white background for EXIF
+                    collageCtx.save();
+                    collageCtx.beginPath();
+                    collageCtx.moveTo(padding + radius, currentY);
+                    collageCtx.lineTo(padding + item.w - radius, currentY);
+                    collageCtx.quadraticCurveTo(padding + item.w, currentY, padding + item.w, currentY + radius);
+                    collageCtx.lineTo(padding + item.w, currentY + item.totalH - radius);
+                    collageCtx.quadraticCurveTo(padding + item.w, currentY + item.totalH, padding + item.w - radius, currentY + item.totalH);
+                    collageCtx.lineTo(padding + radius, currentY + item.totalH);
+                    collageCtx.quadraticCurveTo(padding, currentY + item.totalH, padding, currentY + item.totalH - radius);
+                    collageCtx.lineTo(padding, currentY + radius);
+                    collageCtx.quadraticCurveTo(padding, currentY, padding + radius, currentY);
+                    collageCtx.closePath();
+                    collageCtx.clip();
+                    
+                    collageCtx.drawImage(item.img, padding, currentY, item.w, item.h);
+                    drawExifWatermark(collageCtx, item.exif, padding, currentY + item.h, item.w, item.exifH);
+                    collageCtx.restore();
+                } else {
+                    roundedImage(collageCtx, item.img, padding, currentY, item.w, item.h, radius);
+                }
+                currentY += item.totalH + spacing;
+            });
+
+        } else if (layout === 'horizontal') {
+             const targetHeight = 800;
+             finalHeight = targetHeight + padding * 2;
+             finalWidth = padding;
+
+             const resizedImages = loadedImagesObj.map(item => {
+                const scale = targetHeight / item.img.height;
+                const width = item.img.width * scale;
+                finalWidth += width + spacing;
+                return { img: item.img, w: width, h: targetHeight };
+            });
+
+             // If EXIF is on for horizontal, we add one global watermark at the bottom of the canvas
+             let globalExifHeight = withExif ? Math.max(80, finalWidth * 0.05) : 0;
+             finalHeight += globalExifHeight;
+
+            collageCanvas.width = finalWidth;
+            collageCanvas.height = finalHeight;
+            collageCtx.fillStyle = bgColor;
+            collageCtx.fillRect(0, 0, finalWidth, finalHeight);
+
+            let currentX = padding;
+            resizedImages.forEach(item => {
+                roundedImage(collageCtx, item.img, currentX, padding, item.w, item.h, radius);
+                currentX += item.w + spacing;
+            });
+            
+            if (withExif) {
+                const firstExif = loadedImagesObj[0]?.exifData || {device: "未知设备", params: ""};
+                drawExifWatermark(collageCtx, firstExif, padding, padding + targetHeight + padding/2, finalWidth - padding*2, globalExifHeight);
+            }
+            
+        } else if (layout === 'grid') {
+            const count = loadedImagesObj.length;
+            let cols = Math.ceil(Math.sqrt(count));
+            if (count === 2) cols = 2;
+            if (count === 3) cols = 3;
+            const rows = Math.ceil(count / cols);
+            const cellSize = 600;
+            
+            let cellExifH = withExif ? Math.max(60, cellSize * 0.1) : 0;
+            
+            finalWidth = cols * cellSize + (cols + 1) * spacing;
+            finalHeight = rows * (cellSize + cellExifH) + (rows + 1) * spacing;
+
+            collageCanvas.width = finalWidth;
+            collageCanvas.height = finalHeight;
+            collageCtx.fillStyle = bgColor;
+            collageCtx.fillRect(0, 0, finalWidth, finalHeight);
+
+            loadedImagesObj.forEach((item, index) => {
+                const col = index % cols;
+                const row = Math.floor(index / cols);
+                const x = spacing + col * (cellSize + spacing);
+                const y = spacing + row * (cellSize + cellExifH + spacing);
+
+                const scale = Math.max(cellSize / item.img.width, cellSize / item.img.height);
+                const drawW = item.img.width * scale;
+                const drawH = item.img.height * scale;
+                const dx = (cellSize - drawW) / 2;
+                const dy = (cellSize - drawH) / 2;
+
+                collageCtx.save();
+                collageCtx.beginPath();
+                collageCtx.moveTo(x + radius, y);
+                collageCtx.lineTo(x + cellSize - radius, y);
+                collageCtx.quadraticCurveTo(x + cellSize, y, x + cellSize, y + radius);
+                collageCtx.lineTo(x + cellSize, y + cellSize + cellExifH - radius);
+                collageCtx.quadraticCurveTo(x + cellSize, y + cellSize + cellExifH, x + cellSize - radius, y + cellSize + cellExifH);
+                collageCtx.lineTo(x + radius, y + cellSize + cellExifH);
+                collageCtx.quadraticCurveTo(x, y + cellSize + cellExifH, x, y + cellSize + cellExifH - radius);
+                collageCtx.lineTo(x, y + radius);
+                collageCtx.quadraticCurveTo(x, y, x + radius, y);
+                collageCtx.closePath();
+                collageCtx.clip();
+
+                collageCtx.drawImage(item.img, x + dx, y + dy, drawW, drawH);
+                
+                if (withExif) {
+                    drawExifWatermark(collageCtx, item.exifData, x, y + cellSize, cellSize, cellExifH);
+                }
+                
+                collageCtx.restore();
+            });
+        }
+    }
+
+    if(collageDownloadBtn) {
+        collageDownloadBtn.addEventListener('click', () => {
+            if (loadedImagesObj.length === 0 || !collageCanvas) return;
+            const link = document.createElement('a');
+            link.href = collageCanvas.toDataURL('image/jpeg', 0.95);
+            link.download = `排版拼图_${Date.now()}.jpg`;
+            link.click();
+        });
+    }
+
+    // ==========================================
+    // 功能 3：多任务批量转换逻辑 (JSZip集成)
+    // ==========================================
+    const convertInput = document.getElementById('convertInput');
+    const convertQueueStatus = document.getElementById('convertQueueStatus');
+    const convertWidth = document.getElementById('convertWidth');
+    const convertHeight = document.getElementById('convertHeight');
+    const lockRatio = document.getElementById('lockRatio');
+    const formatSelect = document.getElementById('formatSelect');
+    const qualityControl = document.getElementById('qualityControl');
+    const qualityRange = document.getElementById('qualityRange');
+    const qualityValue = document.getElementById('qualityValue');
+    const convertPreviewImg = document.getElementById('convertPreviewImg');
+    const convertCanvas = document.getElementById('convertCanvas');
+    const convertCtx = convertCanvas ? convertCanvas.getContext('2d') : null;
+    const convertPlaceholder = document.getElementById('convertPlaceholder');
+    const convertDownloadBtn = document.getElementById('convertDownloadBtn');
+
+    let convertFilesQueue = [];
+    let originalConvertImageFirst = null;
+    let originalRatio = 1;
+
+    if(convertInput) {
+        convertInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+            
+            convertFilesQueue = files;
+            if(convertQueueStatus) convertQueueStatus.textContent = `已添加 ${files.length} 个文件至队列`;
+            
+            // 预览首图
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    originalConvertImageFirst = img;
+                    originalRatio = img.width / img.height;
+                    
+                    const sizeLabel = document.getElementById('convertOriginalSize');
+                    if(sizeLabel) sizeLabel.textContent = `首图原尺寸: ${img.width} × ${img.height} px`;
+                    if(convertWidth) { convertWidth.value = img.width; convertWidth.disabled = false; }
+                    if(convertHeight) { convertHeight.value = img.height; convertHeight.disabled = false; }
+                    
+                    if(convertPlaceholder) convertPlaceholder.classList.add('hidden');
+                    if(convertDownloadBtn) convertDownloadBtn.disabled = false;
+                    
+                    updateConvertCanvas();
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(files[0]);
+        });
+    }
+
+    if(convertWidth) {
+        convertWidth.addEventListener('input', () => {
+            if (!originalConvertImageFirst) return;
+            let w = parseInt(convertWidth.value) || 1;
+            if (lockRatio && lockRatio.checked && convertHeight) {
+                convertHeight.value = Math.round(w / originalRatio);
+            }
+            updateConvertCanvas();
+        });
+    }
+
+    if(convertHeight) {
+        convertHeight.addEventListener('input', () => {
+            if (!originalConvertImageFirst) return;
+            let h = parseInt(convertHeight.value) || 1;
+            if (lockRatio && lockRatio.checked && convertWidth) {
+                convertWidth.value = Math.round(h * originalRatio);
+            }
+            updateConvertCanvas();
+        });
+    }
+
+    if(formatSelect) {
+        formatSelect.addEventListener('change', () => {
+            if (!qualityControl || !qualityRange) return;
+            if (formatSelect.value === 'image/png') {
+                qualityControl.style.opacity = '0.4';
+                qualityRange.disabled = true;
+            } else {
+                qualityControl.style.opacity = '1';
+                qualityRange.disabled = false;
+            }
+            updateConvertCanvas();
+        });
+    }
+
+    if(qualityRange) {
+        qualityRange.addEventListener('input', (e) => {
+            if(qualityValue) qualityValue.textContent = e.target.value + '%';
+            updateConvertCanvas();
+        });
+    }
+
+    function updateConvertCanvas() {
+        if (!originalConvertImageFirst || !convertCtx || !convertCanvas) return;
+        const targetW = parseInt(convertWidth ? convertWidth.value : 0) || 1;
+        const targetH = parseInt(convertHeight ? convertHeight.value : 0) || 1;
+        
+        convertCanvas.width = targetW;
+        convertCanvas.height = targetH;
+        
+        if (formatSelect && formatSelect.value === 'image/jpeg') {
+            convertCtx.fillStyle = '#FFFFFF';
+            convertCtx.fillRect(0, 0, targetW, targetH);
+        } else {
+            convertCtx.clearRect(0, 0, targetW, targetH);
+        }
+        
+        convertCtx.drawImage(originalConvertImageFirst, 0, 0, targetW, targetH);
+
+        if (convertPreviewImg) {
+            const format = formatSelect ? formatSelect.value : 'image/jpeg';
+            const quality = qualityRange ? parseInt(qualityRange.value) / 100 : 0.9;
+            convertPreviewImg.src = convertCanvas.toDataURL(format, quality);
+            convertPreviewImg.classList.remove('hidden');
+        }
+    }
+
+    // 辅助函数：将 dataURL 转为 Blob
+    function dataURLtoBlob(dataurl) {
+        var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+        while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], {type:mime});
+    }
+
+    if(convertDownloadBtn) {
+        convertDownloadBtn.addEventListener('click', async () => {
+            if (convertFilesQueue.length === 0) return;
+            
+            const originalText = convertDownloadBtn.textContent;
+            convertDownloadBtn.textContent = `正在打包 ${convertFilesQueue.length} 个文件...`;
+            convertDownloadBtn.disabled = true;
+
+            try {
+                const zip = new JSZip();
+                const format = formatSelect ? formatSelect.value : 'image/jpeg';
+                const ext = format === 'image/jpeg' ? 'jpg' : format.split('/')[1];
+                const quality = qualityRange ? parseInt(qualityRange.value) / 100 : 0.9;
+                
+                const targetW = parseInt(convertWidth.value) || 1;
+                const targetH = parseInt(convertHeight.value) || 1;
+
+                // Process all images asynchronously
+                for(let i=0; i<convertFilesQueue.length; i++) {
+                    const file = convertFilesQueue[i];
+                    await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const img = new Image();
+                            img.onload = () => {
+                                const offCanvas = document.createElement('canvas');
+                                offCanvas.width = targetW;
+                                offCanvas.height = targetH;
+                                const offCtx = offCanvas.getContext('2d');
+                                
+                                if (format === 'image/jpeg') {
+                                    offCtx.fillStyle = '#FFFFFF';
+                                    offCtx.fillRect(0, 0, targetW, targetH);
+                                }
+                                offCtx.drawImage(img, 0, 0, targetW, targetH);
+                                
+                                const dataUrl = offCanvas.toDataURL(format, quality);
+                                const blob = dataURLtoBlob(dataUrl);
+                                
+                                // Generate clean name
+                                let baseName = file.name.substring(0, file.name.lastIndexOf('.')) || `image_${i}`;
+                                zip.file(`${baseName}_converted.${ext}`, blob);
+                                resolve();
+                            };
+                            img.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+                
+                const content = await zip.generateAsync({type:"blob"});
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(content);
+                link.download = `批量转换打包_${Date.now()}.zip`;
+                link.click();
+                URL.revokeObjectURL(link.href);
+                
+            } catch (err) {
+                console.error("ZIP打包出错:", err);
+                alert("批量打包失败，请检查浏览器支持。");
+            } finally {
+                convertDownloadBtn.textContent = originalText;
+                convertDownloadBtn.disabled = false;
+            }
+        });
+    }
+
+    // ==========================================
+    // 功能 4：高级滤镜与修复逻辑
+    // ==========================================
+    const enhanceInput = document.getElementById('enhanceInput');
+    const rangeBrightness = document.getElementById('rangeBrightness');
+    const rangeContrast = document.getElementById('rangeContrast');
+    const rangeSaturation = document.getElementById('rangeSaturation');
+    const rangeSharpen = document.getElementById('rangeSharpen');
+    
+    const valBrightness = document.getElementById('valBrightness');
+    const valContrast = document.getElementById('valContrast');
+    const valSaturation = document.getElementById('valSaturation');
+    const valSharpen = document.getElementById('valSharpen');
+
+    const enhancePreviewCanvas = document.getElementById('enhancePreviewCanvas');
+    const enhanceCtx = enhancePreviewCanvas ? enhancePreviewCanvas.getContext('2d', { willReadFrequently: true }) : null;
+    const enhancePlaceholder = document.getElementById('enhancePlaceholder');
+    const enhanceDownloadBtn = document.getElementById('enhanceDownloadBtn');
+    const filterPresetBtns = document.querySelectorAll('.filter-preset');
+
+    let originalEnhanceImage = null;
+    let previewEnhanceImage = null;
+    let enhanceTimeout = null;
+    let activePresetFilter = '';
+
+    // 高级滤镜 CSS 映射
+    const filterMaps = {
+        'none': '',
+        'vintage': 'sepia(0.5) contrast(1.1) brightness(0.9) hue-rotate(-10deg)',
+        'grayscale': 'grayscale(1) contrast(1.2)',
+        'cool': 'hue-rotate(15deg) saturate(0.8) contrast(1.1)',
+        'warm': 'sepia(0.3) saturate(1.2) hue-rotate(-5deg)',
+        'highcontrast': 'contrast(1.5) saturate(1.3)'
+    };
+
+    filterPresetBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterPresetBtns.forEach(b => b.classList.remove('active', 'ring-2', 'ring-indigo-500'));
+            btn.classList.add('active', 'ring-2', 'ring-indigo-500');
+            activePresetFilter = filterMaps[btn.dataset.filter];
+            applyEnhancements();
+        });
+    });
+
+    if (enhanceInput) {
+        enhanceInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    originalEnhanceImage = img;
+                    
+                    const maxDim = 1000;
+                    if (img.width > maxDim || img.height > maxDim) {
+                        const scale = Math.min(maxDim / img.width, maxDim / img.height);
+                        const pCanvas = document.createElement('canvas');
+                        pCanvas.width = Math.round(img.width * scale);
+                        pCanvas.height = Math.round(img.height * scale);
+                        const pCtx = pCanvas.getContext('2d');
+                        pCtx.drawImage(img, 0, 0, pCanvas.width, pCanvas.height);
+                        previewEnhanceImage = pCanvas;
+                    } else {
+                        previewEnhanceImage = null;
+                    }
+                    
+                    const activeImage = previewEnhanceImage || originalEnhanceImage;
+                    if(enhancePreviewCanvas) {
+                        enhancePreviewCanvas.width = activeImage.width;
+                        enhancePreviewCanvas.height = activeImage.height;
+                        enhancePreviewCanvas.classList.remove('hidden');
+                    }
+                    if(enhancePlaceholder) enhancePlaceholder.classList.add('hidden');
+                    if(enhanceDownloadBtn) enhanceDownloadBtn.disabled = false;
+                    
+                    applyEnhancements();
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    [rangeBrightness, rangeContrast, rangeSaturation, rangeSharpen].forEach(slider => {
+        if(slider) {
+            slider.addEventListener('input', (e) => {
+                if(e.target === rangeBrightness && valBrightness) valBrightness.textContent = e.target.value + '%';
+                if(e.target === rangeContrast && valContrast) valContrast.textContent = e.target.value + '%';
+                if(e.target === rangeSaturation && valSaturation) valSaturation.textContent = e.target.value + '%';
+                if(e.target === rangeSharpen && valSharpen) valSharpen.textContent = e.target.value;
+
+                clearTimeout(enhanceTimeout);
+                enhanceTimeout = setTimeout(applyEnhancements, 50);
+            });
+        }
+    });
+
+    function applyEnhancements() {
+        if (!originalEnhanceImage || !enhanceCtx || !enhancePreviewCanvas) return;
+        
+        const activeImage = previewEnhanceImage || originalEnhanceImage;
+        const w = activeImage.width;
+        const h = activeImage.height;
+        
+        enhancePreviewCanvas.width = w;
+        enhancePreviewCanvas.height = h;
+        
+        const br = rangeBrightness ? rangeBrightness.value : 100;
+        const ct = rangeContrast ? rangeContrast.value : 100;
+        const sa = rangeSaturation ? rangeSaturation.value : 100;
+        
+        // Combine base filter with preset filter
+        let combinedFilter = `brightness(${br}%) contrast(${ct}%) saturate(${sa}%)`;
+        if (activePresetFilter) {
+            combinedFilter += ` ${activePresetFilter}`;
+        }
+        
+        enhanceCtx.filter = combinedFilter;
+        enhanceCtx.clearRect(0, 0, w, h);
+        enhanceCtx.drawImage(activeImage, 0, 0);
+        enhanceCtx.filter = 'none';
+        
+        const sharpenIntensity = rangeSharpen ? parseInt(rangeSharpen.value) : 0;
+        if (sharpenIntensity > 0) {
+            const imageData = enhanceCtx.getImageData(0, 0, w, h);
+            const data = imageData.data;
+            const dstData = new Uint8ClampedArray(data.length);
+            
+            const mix = sharpenIntensity / 100;
+            const center = 4 * mix + 1;
+            const edge = -mix;
+            
+            const weights = [
+                0, edge, 0,
+                edge, center, edge,
+                0, edge, 0
+            ];
+            
+            const side = 3;
+            const halfSide = 1;
+            
+            for (let y = 0; y < h; y++) {
+                for (let x = 0; x < w; x++) {
+                    const dstOff = (y * w + x) * 4;
+                    let r = 0, g = 0, b = 0;
+                    
+                    for (let cy = 0; cy < side; cy++) {
+                        for (let cx = 0; cx < side; cx++) {
+                            const scy = y + cy - halfSide;
+                            const scx = x + cx - halfSide;
+                            
+                            let srcOff = (scy >= 0 && scy < h && scx >= 0 && scx < w) 
+                                ? (scy * w + scx) * 4 
+                                : dstOff;
+                            
+                            const wt = weights[cy * side + cx];
+                            r += data[srcOff] * wt;
+                            g += data[srcOff + 1] * wt;
+                            b += data[srcOff + 2] * wt;
+                        }
+                    }
+                    
+                    dstData[dstOff] = r;
+                    dstData[dstOff + 1] = g;
+                    dstData[dstOff + 2] = b;
+                    dstData[dstOff + 3] = data[dstOff + 3];
+                }
+            }
+            
+            const newImageData = new ImageData(dstData, w, h);
+            enhanceCtx.putImageData(newImageData, 0, 0);
+        }
+    }
+
+    if (enhanceDownloadBtn) {
+        enhanceDownloadBtn.addEventListener('click', () => {
+            if (!originalEnhanceImage) return;
+            
+            const originalText = enhanceDownloadBtn.textContent;
+            enhanceDownloadBtn.textContent = '正在生成超清大图，请稍候...';
+            enhanceDownloadBtn.disabled = true;
+            
+            setTimeout(() => {
+                try {
+                    const fullCanvas = document.createElement('canvas');
+                    fullCanvas.width = originalEnhanceImage.width;
+                    fullCanvas.height = originalEnhanceImage.height;
+                    const fullCtx = fullCanvas.getContext('2d');
+                    
+                    const br = rangeBrightness ? rangeBrightness.value : 100;
+                    const ct = rangeContrast ? rangeContrast.value : 100;
+                    const sa = rangeSaturation ? rangeSaturation.value : 100;
+                    
+                    let combinedFilter = `brightness(${br}%) contrast(${ct}%) saturate(${sa}%)`;
+                    if (activePresetFilter) combinedFilter += ` ${activePresetFilter}`;
+                    
+                    fullCtx.filter = combinedFilter;
+                    fullCtx.drawImage(originalEnhanceImage, 0, 0);
+                    fullCtx.filter = 'none';
+                    
+                    const sharpenIntensity = rangeSharpen ? parseInt(rangeSharpen.value) : 0;
+                    if (sharpenIntensity > 0) {
+                        const w = fullCanvas.width;
+                        const h = fullCanvas.height;
+                        const imageData = fullCtx.getImageData(0, 0, w, h);
+                        const data = imageData.data;
+                        const dstData = new Uint8ClampedArray(data.length);
+                        
+                        const mix = sharpenIntensity / 100;
+                        const center = 4 * mix + 1;
+                        const edge = -mix;
+                        
+                        const weights = [
+                            0, edge, 0,
+                            edge, center, edge,
+                            0, edge, 0
+                        ];
+                        
+                        const side = 3;
+                        const halfSide = 1;
+                        
+                        for (let y = 0; y < h; y++) {
+                            for (let x = 0; x < w; x++) {
+                                const dstOff = (y * w + x) * 4;
+                                let r = 0, g = 0, b = 0;
+                                
+                                for (let cy = 0; cy < side; cy++) {
+                                    for (let cx = 0; cx < side; cx++) {
+                                        const scy = y + cy - halfSide;
+                                        const scx = x + cx - halfSide;
+                                        let srcOff = (scy >= 0 && scy < h && scx >= 0 && scx < w) 
+                                            ? (scy * w + scx) * 4 
+                                            : dstOff;
+                                        
+                                        const wt = weights[cy * side + cx];
+                                        r += data[srcOff] * wt;
+                                        g += data[srcOff + 1] * wt;
+                                        b += data[srcOff + 2] * wt;
+                                    }
+                                }
+                                
+                                dstData[dstOff] = r;
+                                dstData[dstOff + 1] = g;
+                                dstData[dstOff + 2] = b;
+                                dstData[dstOff + 3] = data[dstOff + 3];
+                            }
+                        }
+                        
+                        const newImageData = new ImageData(dstData, w, h);
+                        fullCtx.putImageData(newImageData, 0, 0);
+                    }
+                    
+                    const link = document.createElement('a');
+                    link.href = fullCanvas.toDataURL('image/jpeg', 0.98);
+                    link.download = `修复滤镜出图_${Date.now()}.jpg`;
+                    link.click();
+                } catch (err) {
+                    console.error('全尺寸滤镜生成出错:', err);
+                    alert('保存失败，请重试');
+                } finally {
+                    enhanceDownloadBtn.textContent = originalText;
+                    enhanceDownloadBtn.disabled = false;
+                }
+            }, 50);
+        });
+    }
+
+    // 初始化显示
+    switchTab('bg-remover');
+</script>
+</body>
+</html>
