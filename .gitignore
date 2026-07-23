@@ -1,0 +1,5 @@
+# 备份与临时文件
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
