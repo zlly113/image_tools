@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>超级工具箱 Pro - 管理控制台 (Admin)</title>
+    <!-- Tailwind CSS (本地) -->
+    <script src="/models/tailwindcss.js?v=1.1"></script>
+    <!-- Chart.js (本地离线) -->
+    <script src="/models/chart.umd.js"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0f172a',
+                        darkCard: 'rgba(30, 41, 59, 0.7)',
+                        darkBorder: '#334155',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-darkBg text-gray-800 dark:text-gray-200 min-h-screen">
+
+    <!-- 登录认证模态框 -->
+    <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white mx-auto mb-3 shadow-lg shadow-indigo-500/30">
+                    <i class="fas fa-shield-alt text-xl"></i>
+                </div>
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white">管理员认证 (Admin Auth)</h2>
+                <p class="text-xs text-gray-500 mt-1">登录超级管理员账号或输入 Secret Token 以解锁管理控制台</p>
+            </div>
+
+            <!-- 登录模式切换 Tab -->
+            <div class="flex border-b border-gray-200 dark:border-slate-800 mb-5">
+                <button type="button" id="authTabAccountBtn" onclick="switchAdminAuthMode('account')" class="flex-1 pb-2.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400">
+                    <i class="fas fa-user-shield mr-1"></i> 账号密码登录
+                </button>
+                <button type="button" id="authTabTokenBtn" onclick="switchAdminAuthMode('token')" class="flex-1 pb-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 border-b-2 border-transparent">
+                    <i class="fas fa-key mr-1"></i> Token 密钥登录
+                </button>
+            </div>
+
+            <!-- 表单 1：账号密码登录 -->
+            <form id="adminAccountForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">管理员邮箱 (Admin Email)</label>
+                    <input type="email" id="adminEmailInput" required placeholder="admin@example.com" class="w-full text-sm border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl px-4 py-2.5 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">登录密码 (Password)</label>
+                    <input type="password" id="adminPasswordInput" required placeholder="请输入管理员密码..." class="w-full text-sm border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl px-4 py-2.5 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                </div>
+                <button type="submit" id="adminAccountSubmitBtn" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl transition-all shadow-md shadow-indigo-500/20 flex items-center justify-center gap-2">
+                    <i class="fas fa-sign-in-alt text-xs"></i> 登录控制台
+                </button>
+            </form>
+
+            <!-- 表单 2：静态 Secret Token 登录 -->
+            <form id="adminTokenForm" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Secret Admin Token</label>
+                    <input type="password" id="tokenInput" placeholder="输入固定 ADMIN_TOKEN..." class="w-full text-sm border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl px-4 py-3 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono" />
+                </div>
+                <button type="button" id="loginBtn" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl transition-all shadow-md shadow-indigo-500/20 flex items-center justify-center gap-2">
+                    <i class="fas fa-key text-xs"></i> 验证 Token 并登录
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 后台管理主界面 -->
+    <div id="mainContent" class="hidden min-h-screen flex flex-col">
+        <!-- 顶部导航栏 -->
+        <header class="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white">
+                    <i class="fas fa-toolbox text-sm"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-base text-gray-900 dark:text-white">超级工具箱 Pro - 管理控制台</h1>
+                    <span class="text-[10px] text-gray-400 font-mono">Phase 2 · 数据分析 / 广告 / 外链 / 站点配置</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="/" target="_blank" class="text-xs text-gray-500 hover:text-indigo-600 flex items-center gap-1">
+                    <i class="fas fa-external-link-alt"></i> 前往主站
+                </a>
+                <button id="logoutBtn" class="px-3 py-1.5 rounded-lg border border-gray-200 dark:border-slate-700 text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors">
+                    <i class="fas fa-sign-out-alt mr-1"></i> 退出登录
+                </button>
+            </div>
+        </header>
+
+        <!-- 主操作区 -->
+        <div class="flex-grow max-w-7xl w-full mx-auto p-6 md:p-8">
+            <!-- 标签页导航 -->
+            <div class="flex border-b border-gray-200 dark:border-slate-800 mb-6 gap-2">
+                <button onclick="switchAdminTab('analytics')" id="tabBtn-analytics" class="px-4 py-2 text-sm font-semibold text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400 flex items-center gap-2">
+                    <i class="fas fa-chart-line text-xs"></i> 数据统计分析
+                </button>
+                <button onclick="switchAdminTab('ads')" id="tabBtn-ads" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border-b-2 border-transparent flex items-center gap-2">
+                    <i class="fas fa-bullhorn text-xs"></i> 广告位管理
+                </button>
+                <button onclick="switchAdminTab('links')" id="tabBtn-links" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border-b-2 border-transparent flex items-center gap-2">
+                    <i class="fas fa-link text-xs"></i> 外链与推荐工具
+                </button>
+                <button onclick="switchAdminTab('users')" id="tabBtn-users" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border-b-2 border-transparent flex items-center gap-2">
+                    <i class="fas fa-users text-xs"></i> 用户与点数
+                </button>
+                <button onclick="switchAdminTab('pricing')" id="tabBtn-pricing" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border-b-2 border-transparent flex items-center gap-2">
+                    <i class="fas fa-tags text-xs"></i> 工具定价与限额
+                </button>
+                <button onclick="switchAdminTab('config')" id="tabBtn-config" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 border-b-2 border-transparent flex items-center gap-2">
+                    <i class="fas fa-cog text-xs"></i> 全站配置
+                </button>
+            </div>
+
+            <!-- 面板 0：数据统计分析 (Analytics) -->
+            <div id="panel-analytics" class="block space-y-6">
+                <!-- 顶部 4 宫格 KPI 卡片 -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center text-xl">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs text-gray-400 font-medium">今日 PV (浏览量)</span>
+                            <h3 id="statTodayPv" class="text-2xl font-bold text-gray-900 dark:text-white mt-0.5">0</h3>
+                            <span class="text-[10px] text-gray-400">总累计: <span id="statTotalPv">0</span></span>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-xl">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs text-gray-400 font-medium">今日 UV (访客数)</span>
+                            <h3 id="statTodayUv" class="text-2xl font-bold text-gray-900 dark:text-white mt-0.5">0</h3>
+                            <span class="text-[10px] text-gray-400">总累计: <span id="statTotalUv">0</span></span>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center text-xl">
+                            <i class="fas fa-network-wired"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs text-gray-400 font-medium">今日独立 IP</span>
+                            <h3 id="statTodayIp" class="text-2xl font-bold text-gray-900 dark:text-white mt-0.5">0</h3>
+                            <span class="text-[10px] text-gray-400">跳出会话: <span id="statTodayBounce">0</span></span>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center text-xl">
+                            <i class="fas fa-wand-magic-sparkles"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs text-gray-400 font-medium">核心工具调用量</span>
+                            <h3 id="statTotalFeatures" class="text-2xl font-bold text-gray-900 dark:text-white mt-0.5">0</h3>
+                            <span class="text-[10px] text-emerald-500">运行正常</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 趋势图表区 (近30天 PV/UV 趋势) -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                <i class="fas fa-chart-area text-indigo-500"></i> 近 30 天访问趋势 (PV & UV)
+                            </h3>
+                            <p class="text-xs text-gray-400 mt-0.5">北京时间 0:00 - 24:00 日粒度预聚合统计</p>
+                        </div>
+                    </div>
+                    <div class="h-64 relative">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 两个分布图表 (功能排行榜 & 设备分布) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-1">
+                                <i class="fas fa-fire text-amber-500"></i> 工具使用频次排行
+                            </h3>
+                            <p class="text-xs text-gray-400 mb-4">各工具实际操作触发量与成功率</p>
+                        </div>
+                        <div class="h-56 relative">
+                            <canvas id="featuresChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-1">
+                                <i class="fas fa-mobile-screen text-teal-500"></i> 访客终端设备分布
+                            </h3>
+                            <p class="text-xs text-gray-400 mb-4">桌面端 / 移动端 / 平板设备占比</p>
+                        </div>
+                        <div class="h-56 relative flex items-center justify-center">
+                            <canvas id="devicesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 面板 1：广告位管理 -->
+            <div id="panel-ads" class="hidden space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-900 dark:text-white">广告列表</h2>
+                        <p class="text-xs text-gray-500">管理首页顶部横幅、侧边栏方块及正文内广告</p>
+                    </div>
+                    <button onclick="showCreateAdModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-colors flex items-center gap-1.5">
+                        <i class="fas fa-plus"></i> 新建广告
+                    </button>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50/80 dark:bg-slate-800/50 border-b border-gray-100 dark:border-slate-800 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                                    <th class="py-3 px-4">ID</th>
+                                    <th class="py-3 px-4">广告位标识</th>
+                                    <th class="py-3 px-4">标题 (中/英)</th>
+                                    <th class="py-3 px-4">行为类型</th>
+                                    <th class="py-3 px-4">点击统计</th>
+                                    <th class="py-3 px-4">状态</th>
+                                    <th class="py-3 px-4 text-right">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adsTableBody">
+                                <!-- 动态加载 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 面板 2：外链与推荐工具 -->
+            <div id="panel-links" class="hidden space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-900 dark:text-white">友情推荐与扩展工具</h2>
+                        <p class="text-xs text-gray-500">管理页脚展示的外部实用工具与友情链接</p>
+                    </div>
+                    <button onclick="showCreateLinkModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-colors flex items-center gap-1.5">
+                        <i class="fas fa-plus"></i> 新建外链
+                    </button>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50/80 dark:bg-slate-800/50 border-b border-gray-100 dark:border-slate-800 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                                    <th class="py-3 px-4">ID</th>
+                                    <th class="py-3 px-4">分类</th>
+                                    <th class="py-3 px-4">标题与描述</th>
+                                    <th class="py-3 px-4">跳转目标 URL</th>
+                                    <th class="py-3 px-4">状态</th>
+                                    <th class="py-3 px-4 text-right">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="linksTableBody">
+                                <!-- 动态加载 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 面板 4：用户与点数管理 (Phase 2a) -->
+            <div id="panel-users" class="hidden space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-900 dark:text-white">用户列表与点数运营</h2>
+                        <p class="text-xs text-gray-500">查看注册用户、调整用户算力点数并审计操作流水</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="userSearchInput" placeholder="搜索邮箱或用户名..." class="text-xs border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl px-3 py-2 dark:text-white" />
+                        <button onclick="window.loadUsers()" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl">
+                            <i class="fas fa-search"></i> 搜索
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50/80 dark:bg-slate-800/50 border-b border-gray-100 dark:border-slate-800 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                                    <th class="py-3 px-4">UID</th>
+                                    <th class="py-3 px-4">用户名 / 邮箱</th>
+                                    <th class="py-3 px-4">角色</th>
+                                    <th class="py-3 px-4">点数余额</th>
+                                    <th class="py-3 px-4">注册时间</th>
+                                    <th class="py-3 px-4">状态</th>
+                                    <th class="py-3 px-4 text-right">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- 动态加载 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 面板 5：工具定价与限额管理 (Phase 2a) -->
+            <div id="panel-pricing" class="hidden space-y-4">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white">工具定价与免费额度</h2>
+                    <p class="text-xs text-gray-500">动态开关工具免费模式、设置每日免费额度与每次调用扣点</p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50/80 dark:bg-slate-800/50 border-b border-gray-100 dark:border-slate-800 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                                    <th class="py-3 px-4">工具 Key</th>
+                                    <th class="py-3 px-4">显示名称</th>
+                                    <th class="py-3 px-4">单次扣费点数</th>
+                                    <th class="py-3 px-4">每日免费次数 (0=纯付费)</th>
+                                    <th class="py-3 px-4">启用状态</th>
+                                    <th class="py-3 px-4 text-right">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pricingTableBody">
+                                <!-- 动态加载 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 面板 3：全站配置 -->
+            <div id="panel-config" class="hidden space-y-4">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white">全站参数与广播设置</h2>
+                    <p class="text-xs text-gray-500">管理站点全局名称、全站公告与维护模式开关</p>
+                </div>
+                <div id="configsContainer">
+                    <!-- 动态加载 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 用户点数调整/充值模态框 (Phase 2a) -->
+    <div id="rechargeUserModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
+        <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-3xl p-6 md:p-8 max-w-sm w-full mx-4 shadow-2xl">
+            <div class="flex items-center justify-between mb-4 border-b border-gray-100 dark:border-slate-800 pb-3">
+                <h3 class="text-base font-bold text-gray-900 dark:text-white">手动调整用户点数</h3>
+                <button onclick="closeRechargeUserModal()" class="text-gray-400 hover:text-gray-600 text-sm"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="rechargeUserForm" onsubmit="submitRechargeUser(event); return false;" class="space-y-4">
+                <input type="hidden" id="rechargeUserIdInput" />
+                <div>
+                    <label class="block text-xs font-semibold mb-1">目标用户</label>
+                    <div id="rechargeUserTargetLabel" class="text-xs font-mono font-bold text-indigo-600 p-2 bg-gray-50 dark:bg-slate-800 rounded-xl">UID: -</div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1">变动点数 (正数增加，负数扣减)</label>
+                    <input type="number" id="rechargeAmountInput" required placeholder="如：100 或 -20" class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white" />
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1">调账原因/备注 (必填审计)</label>
+                    <input type="text" id="rechargeRemarkInput" required placeholder="如：内测奖励 / 线下转账充值" class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white" />
+                </div>
+                <div class="pt-3 border-t border-gray-100 dark:border-slate-800 flex justify-end gap-2">
+                    <button type="button" onclick="closeRechargeUserModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-800">取消</button>
+                    <button type="button" onclick="submitRechargeUser(event)" id="rechargeSubmitBtn" class="px-5 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">确认提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 广告编辑/新建模态框 -->
+    <div id="adModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
+        <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-3xl p-6 md:p-8 max-w-xl w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-4 border-b border-gray-100 dark:border-slate-800 pb-3">
+                <h3 id="adModalTitle" class="text-base font-bold text-gray-900 dark:text-white">新建广告</h3>
+                <button onclick="closeAdModal()" class="text-gray-400 hover:text-gray-600 text-sm"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="adForm" class="space-y-4">
+                <input type="hidden" id="adIdInput" />
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">广告位 Slot ID</label>
+                        <select id="adSlotInput" required class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white">
+                            <option value="top-banner">top-banner (顶部横幅)</option>
+                            <option value="sidebar-ad">sidebar-ad (侧边栏方块)</option>
+                            <option value="in-content-ad">in-content-ad (内容区分隔)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">展示样式 Format</label>
+                        <select id="adFormat" class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white">
+                            <option value="banner">banner (长条横幅)</option>
+                            <option value="square">square (正方/紧凑卡片)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">标题 (中文)</label>
+                        <input type="text" id="adTitleZh" required placeholder="如：🚀 黄金广告位招商" class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Title (English)</label>
+                        <input type="text" id="adTitleEn" placeholder="e.g. Sponsor Banner" class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white" />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">描述 (中文)</label>
+                        <input type="text" id="adDescZh" placeholder="描述文字..." class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Description (English)</label>
+                        <input type="text" id="adDescEn" placeholder="English description..." class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white" />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">点击行为 Action Type</label>
+                        <select id="adActionType" class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white">
+                            <option value="link">link (跳转外链)</option>
+                            <option value="wechat">wechat (点击一键复制微信号)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">微信号 (Action=wechat 时必填)</label>
+                        <input type="text" id="adWechatId" placeholder="微信号..." class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white" />
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold mb-1">跳转链接 URL (Action=link 时)</label>
+                    <input type="text" id="adLinkUrl" placeholder="https://..." class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white" />
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">图片 URL (可选，自定义 Banner 图片)</label>
+                        <input type="text" id="adImageUrl" placeholder="https://... 或留空使用渐变色" class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">排序权重 (越大越前)</label>
+                        <input type="number" id="adSortOrder" value="0" class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white" />
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-gray-100 dark:border-slate-800 flex justify-end gap-2">
+                    <button type="button" onclick="closeAdModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-800">取消</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">保存提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 外链编辑/新建模态框 -->
+    <div id="linkModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
+        <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-3xl p-6 md:p-8 max-w-lg w-full mx-4 shadow-2xl">
+            <div class="flex items-center justify-between mb-4 border-b border-gray-100 dark:border-slate-800 pb-3">
+                <h3 id="linkModalTitle" class="text-base font-bold text-gray-900 dark:text-white">新建外链</h3>
+                <button onclick="closeLinkModal()" class="text-gray-400 hover:text-gray-600 text-sm"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="linkForm" class="space-y-4">
+                <input type="hidden" id="linkIdInput" />
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">分类</label>
+                        <select id="linkCategory" class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white">
+                            <option value="tool">tool (推荐工具)</option>
+                            <option value="friend">friend (友情链接)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">FontAwesome 图标类名</label>
+                        <input type="text" id="linkIconClass" placeholder="如：fa-keyboard" class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white" />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">标题 (中文)</label>
+                        <input type="text" id="linkTitleZh" required placeholder="如：打字练习" class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Title (English)</label>
+                        <input type="text" id="linkTitleEn" placeholder="e.g. Typing Practice" class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white" />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">描述 (中文)</label>
+                        <input type="text" id="linkDescZh" placeholder="如：在线打字指法训练" class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Description (English)</label>
+                        <input type="text" id="linkDescEn" placeholder="Online typing practice" class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white" />
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold mb-1">目标链接 URL</label>
+                    <input type="url" id="linkUrl" required placeholder="https://..." class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white" />
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold mb-1">排序权重 (越大越前)</label>
+                    <input type="number" id="linkSortOrder" value="0" class="w-full text-xs border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 rounded-xl p-2.5 dark:text-white" />
+                </div>
+
+                <div class="pt-3 border-t border-gray-100 dark:border-slate-800 flex justify-end gap-2">
+                    <button type="button" onclick="closeLinkModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-800">取消</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">保存提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="/admin/js/adminApp.js"></script>
+</body>
+</html>

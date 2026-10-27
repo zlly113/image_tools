@@ -1,5 +1,36 @@
 # 备份与临时文件
 *.bak
 *.tmp
+*.zip
 .DS_Store
 Thumbs.db
+
+# 环境配置与敏感数据 (禁止提交真实数据库与密钥)
+.env
+*.env
+data/*.db
+data/*.db-wal
+data/*.db-shm
+
+# Python 运行时与缓存
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# 虚拟环境
+.venv/
+venv/
+ENV/
+env/
+
+# IDE 与编辑器配置
+.vscode/
+.idea/
+
+# 测试与输出产物
+dist/
+build/
+*.egg-info/
+scratch/

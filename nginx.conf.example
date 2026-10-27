@@ -1,0 +1,225 @@
+# ==============================================================================
+# 超级工具箱 Pro (Super Toolbox Pro) - 生产环境 Nginx 推荐配置模版
+# 部署路径建议：/etc/nginx/sites-available/hhdzai.top 或 conf.d/image_tools.conf
+# ==============================================================================
+
+upstream fastapi_backend {
+    server 127.0.0.1:8001; # 请匹配实际运行端口 (后端 FastAPI 默认 8001)
+    keepalive 32;
+}
+
+# ------------------------------------------------------------------------------
+# 1. HTTP 80 端口服务：全自动强制 301 重定向至 HTTPS
+# ------------------------------------------------------------------------------
+server {
+    listen 80;
+    server_name hhdzai.top www.hhdzai.top;
+
+    # 强制所有 HTTP 访问跳转至 HTTPS (多线程 WASM 与 SharedArrayBuffer 必需)
+    return 301 https://$host$request_uri;
+}
+
+# ------------------------------------------------------------------------------
+# 2. HTTPS 443 端口服务：主生产环境站点
+# ------------------------------------------------------------------------------
+server {
+    listen 443 ssl http2;
+    server_name hhdzai.top www.hhdzai.top;
+
+    # SSL 证书配置 (请替换为您服务器上的实际证书路径，如 Let's Encrypt 路径)
+    ssl_certificate /etc/letsencrypt/live/hhdzai.top/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/hhdzai.top/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1d;
+
+    # 项目根目录绝对路径 (请根据实际 VPS 路径修改)
+    set $project_root /var/www/image_tools;
+
+    # 全局启用 Gzip 压缩 (大幅节省文本文件带宽)
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript application/wasm;
+
+    # --------------------------------------------------------------------------
+    # 核心安全与多线程 WASM 头 (SharedArrayBuffer 所需，严禁删除)
+    # --------------------------------------------------------------------------
+    add_header Cross-Origin-Opener-Policy "same-origin" always;
+    add_header Cross-Origin-Embedder-Policy "require-corp" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+
+    # --------------------------------------------------------------------------
+    # 0. 核心安全防护规则 (高优先级拦截，严防敏感数据、后端源码与备份包泄露)
+    # --------------------------------------------------------------------------
+    # 严禁访问任何隐藏文件与隐藏目录 (如 .env, .git，但保留 Let's Encrypt 验证目录)
+    location ~ /\.(?!well-known) {
+        deny all;
+        return 404;
+    }
+
+    # 严禁直接通过 Web 访问后端服务代码与数据库文件目录
+    location ^~ /server/ {
+        deny all;
+        return 404;
+    }
+
+    location ^~ /data/ {
+        deny all;
+        return 404;
+    }
+
+    location ^~ /scratch/ {
+        deny all;
+        return 404;
+    }
+
+    location ^~ /.scratch/ {
+        deny all;
+        return 404;
+    }
+
+    # 严禁下载源代码、数据库、备份压缩包及各类运维敏感文件
+    location ~* \.(env|db|sqlite|sqlite3|py|sh|zip|tar|gz|7z|bak|sql|md|log)$ {
+        deny all;
+        return 404;
+    }
+
+    # --------------------------------------------------------------------------
+    # 1. 大模型与 WASM 静态资产加速区
+    # 彻底绕过 Python，由 Linux 内核 sendfile 直接高并发零拷贝分发
+    # --------------------------------------------------------------------------
+    location /models/ {
+        alias $project_root/models/;
+        sendfile on;
+        sendfile_max_chunk 1m;
+        tcp_nopush on;
+        tcp_nodelay on;
+
+        # 强缓存 1 年：浏览器与 Cloudflare CDN 边缘节点只下载一次，永久命中缓存
+        expires 365d;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        add_header Access-Control-Allow-Origin "*" always;
+        add_header Cross-Origin-Resource-Policy "cross-origin" always;
+        add_header Cross-Origin-Opener-Policy "same-origin" always;
+        add_header Cross-Origin-Embedder-Policy "require-corp" always;
+
+        # 确保关键 MIME 类型正确识别（.mjs 必须识别为 javascript，.wasm 识别为 wasm）
+        types {
+            application/wasm wasm;
+            application/javascript js mjs;
+            application/x-tar tar;
+        }
+    }
+
+    # --------------------------------------------------------------------------
+    # 2. 常规静态资源 (JS / 国际化语言包 / 图标)
+    # --------------------------------------------------------------------------
+    location /js/ {
+        alias $project_root/js/;
+        expires 7d;
+        add_header Cache-Control "public, max-age=604800";
+        add_header Cross-Origin-Opener-Policy "same-origin" always;
+        add_header Cross-Origin-Embedder-Policy "require-corp" always;
+    }
+
+    location /locales/ {
+        alias $project_root/locales/;
+        expires 7d;
+        add_header Cache-Control "public, max-age=604800";
+    }
+
+    location /icons/ {
+        alias $project_root/icons/;
+        expires 30d;
+        add_header Cache-Control "public, max-age=2592000";
+    }
+
+    # --------------------------------------------------------------------------
+    # 3. PWA 与根目录单文件
+    # --------------------------------------------------------------------------
+    location = /sw.js {
+        alias $project_root/sw.js;
+        # Service Worker 严禁长缓存，确保更新能立即推送给用户
+        expires -1;
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+    }
+
+    location ~ ^/(robots\.txt|sitemap\.xml|manifest\.json|opencv-esm-wrapper\.js)$ {
+        root $project_root;
+        expires 1d;
+        add_header Cache-Control "public, max-age=86400";
+    }
+
+    # --------------------------------------------------------------------------
+    # 4. 后台控制台静态页面
+    # --------------------------------------------------------------------------
+    location = /admin {
+        return 301 /admin/;
+    }
+
+    location /admin/ {
+        alias $project_root/admin/;
+        try_files $uri $uri/ /admin/index.html;
+        expires 1h;
+        add_header Cache-Control "no-cache";
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Frame-Options "SAMEORIGIN" always;
+    }
+
+    # --------------------------------------------------------------------------
+    # 5. 前台首页 (特别注意：此处必须带上跨域隔离头与通用安全头，避免被覆盖)
+    # --------------------------------------------------------------------------
+    location / {
+        root $project_root;
+        try_files $uri $uri.html $uri/ /index.html;
+        expires 1h;
+        add_header Cache-Control "public, max-age=3600";
+        add_header Cross-Origin-Opener-Policy "same-origin" always;
+        add_header Cross-Origin-Embedder-Policy "require-corp" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Frame-Options "SAMEORIGIN" always;
+    }
+
+    # --------------------------------------------------------------------------
+    # 6. 后端动态 API 与短链接原生 302 重定向反向代理
+    # --------------------------------------------------------------------------
+    location /s/ {
+        proxy_pass http://fastapi_backend;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr; # 仅传递真实客户端 IP，禁止客户端伪造首段
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # 短链重定向严禁被中间代理强缓存
+        add_header Cache-Control "no-store, no-cache, must-revalidate";
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Frame-Options "SAMEORIGIN" always;
+    }
+
+    location /api/ {
+        proxy_pass http://fastapi_backend;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr; # 仅传递真实客户端 IP，禁止客户端伪造首段
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # 动态 API 严禁缓存
+        add_header Cache-Control "no-store, no-cache, must-revalidate";
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Frame-Options "SAMEORIGIN" always;
+
+        # 超时时间设置
+        proxy_connect_timeout 10s;
+        proxy_read_timeout 60s;
+        proxy_send_timeout 60s;
+    }
+}
