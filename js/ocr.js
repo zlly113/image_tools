@@ -505,13 +505,13 @@ function updateResultTextarea() {
 
 function switchOcrTab(tabId) {
     if (tabId === 'preview') {
-        ocrTabBtnPreview.className = "border-indigo-500 text-indigo-600 dark:text-indigo-400 border-b-2 py-2.5 px-1 text-sm font-medium focus:outline-none";
-        ocrTabBtnText.className = "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 border-b-2 py-2.5 px-1 text-sm font-medium focus:outline-none";
+        ocrTabBtnPreview.className = "border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100 border-b-2 py-2 px-1 text-xs md:text-sm font-semibold focus:outline-none transition-colors";
+        ocrTabBtnText.className = "border-transparent text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 border-b-2 py-2 px-1 text-xs md:text-sm font-medium focus:outline-none transition-colors";
         ocrTabContentPreview.classList.remove('hidden');
         ocrTabContentText.classList.add('hidden');
     } else {
-        ocrTabBtnText.className = "border-indigo-500 text-indigo-600 dark:text-indigo-400 border-b-2 py-2.5 px-1 text-sm font-medium focus:outline-none";
-        ocrTabBtnPreview.className = "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 border-b-2 py-2.5 px-1 text-sm font-medium focus:outline-none";
+        ocrTabBtnText.className = "border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100 border-b-2 py-2 px-1 text-xs md:text-sm font-semibold focus:outline-none transition-colors";
+        ocrTabBtnPreview.className = "border-transparent text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 border-b-2 py-2 px-1 text-xs md:text-sm font-medium focus:outline-none transition-colors";
         ocrTabContentText.classList.remove('hidden');
         ocrTabContentPreview.classList.add('hidden');
     }

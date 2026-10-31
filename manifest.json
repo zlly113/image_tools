@@ -1,0 +1,44 @@
+{
+  "name": "超级工具箱 Pro - 多功能一体化在线工具平台",
+  "short_name": "超级工具箱",
+  "description": "纯本地浏览器运行的在线多功能工具平台，提供 OCR 文字识别、智能抠图、相片排版、批量压缩转换、画质增强、二维码美化等功能，100% 保护用户隐私。",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#4f46e5",
+  "orientation": "any",
+  "lang": "zh-CN",
+  "categories": ["utilities", "productivity", "photo"],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "文字识别 (OCR)",
+      "short_name": "OCR",
+      "description": "离线本地高精度 OCR 文字与 PDF 提取",
+      "url": "/index.html#ocr",
+      "icons": [{ "src": "/icons/icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "智能抠图",
+      "short_name": "去底色",
+      "description": "智能提取与快速替换证件照背景",
+      "url": "/index.html#bg-remover",
+      "icons": [{ "src": "/icons/icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "二维码工具",
+      "short_name": "二维码",
+      "description": "美化二维码生成与多通道识别",
+      "url": "/index.html#link-tools",
+      "icons": [{ "src": "/icons/icon.svg", "sizes": "any" }]
+    }
+  ]
+}

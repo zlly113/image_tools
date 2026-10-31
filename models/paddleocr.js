@@ -2288,7 +2288,7 @@ function createDefaultWorker() {
   if (typeof Worker !== "function") {
     throw new Error("worker mode requires Web Worker support in this environment.");
   }
-  return (() => { const _w = new URL("./assets/worker-entry-C9UNuyOJ.js", import.meta.url); return new Worker(_w, {
+  return (() => { const _w = new URL("./assets/worker-entry-C9UNuyOJ.js?v=3.1", import.meta.url); return new Worker(_w, {
     type: "module"
   }); })();
 }

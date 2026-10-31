@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - 页面未找到 | 超级工具箱 Pro</title>
+    <meta name="robots" content="noindex, follow">
+    <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+    <script src="/models/tailwindcss.js?v=1.1"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#09090b',
+                        darkCard: '#18181b',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+</head>
+<body class="bg-zinc-50 text-zinc-800 dark:bg-darkBg dark:text-zinc-200 min-h-screen font-sans flex flex-col justify-between transition-colors duration-200">
+
+    <!-- 顶部极简导航 -->
+    <header class="w-full max-w-5xl mx-auto px-6 py-5 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800/80">
+        <a href="/" class="flex items-center gap-2.5 group">
+            <div class="w-8 h-8 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-sm shadow-xs group-hover:scale-105 transition-transform">
+                <i class="fas fa-toolbox"></i>
+            </div>
+            <span class="font-bold text-base tracking-tight text-zinc-900 dark:text-zinc-100">超级工具箱 <span class="text-xs font-semibold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">Pro</span></span>
+        </a>
+        <a href="/" class="text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors flex items-center gap-1.5">
+            <i class="fas fa-arrow-left text-[11px]"></i> 返回主站
+        </a>
+    </header>
+
+    <!-- 404 主体内容 -->
+    <main class="w-full max-w-2xl mx-auto px-6 py-12 text-center my-auto">
+        <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-zinc-100 dark:bg-zinc-800/80 text-zinc-400 dark:text-zinc-500 text-3xl mb-6 shadow-inner">
+            <i class="fas fa-compass"></i>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-black text-zinc-900 dark:text-zinc-100 tracking-tight mb-3">404</h1>
+        <p class="text-lg font-semibold text-zinc-800 dark:text-zinc-200 mb-2">抱歉，您访问的页面不存在或已被移除</p>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto mb-8 leading-relaxed">
+            您可能输入了错误的网址，或者该工具已升级重构。超级工具箱所有功能均在浏览器本地安全运行，无需上传文件。
+        </p>
+
+        <!-- 推荐快捷工具卡片 -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8 text-left">
+            <a href="/bg-remover/" class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-darkCard hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+                <i class="fas fa-id-card text-emerald-500 mb-1.5 text-sm block"></i>
+                <div class="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-500 transition-colors">证件照换底色</div>
+                <div class="text-[11px] text-zinc-400 mt-0.5">智能本地抠图</div>
+            </a>
+            <a href="/ocr/" class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-darkCard hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+                <i class="fas fa-file-lines text-indigo-500 mb-1.5 text-sm block"></i>
+                <div class="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-indigo-500 transition-colors">离线文字识别</div>
+                <div class="text-[11px] text-zinc-400 mt-0.5">PaddleOCR 模型</div>
+            </a>
+            <a href="/pdf-tools/" class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-darkCard hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+                <i class="fas fa-file-pdf text-rose-500 mb-1.5 text-sm block"></i>
+                <div class="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-rose-500 transition-colors">PDF 魔法工具箱</div>
+                <div class="text-[11px] text-zinc-400 mt-0.5">拆分提取转高清图</div>
+            </a>
+            <a href="/qr/" class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-darkCard hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+                <i class="fas fa-qrcode text-amber-500 mb-1.5 text-sm block"></i>
+                <div class="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">二维码工具箱</div>
+                <div class="text-[11px] text-zinc-400 mt-0.5">艺术美化与解码</div>
+            </a>
+            <a href="/image-converter/" class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-darkCard hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+                <i class="fas fa-images text-cyan-500 mb-1.5 text-sm block"></i>
+                <div class="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-cyan-500 transition-colors">批量压缩转换</div>
+                <div class="text-[11px] text-zinc-400 mt-0.5">JPG/PNG/WEBP</div>
+            </a>
+            <a href="/collage/" class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-darkCard hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+                <i class="fas fa-layer-group text-purple-500 mb-1.5 text-sm block"></i>
+                <div class="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-purple-500 transition-colors">多图长图拼接</div>
+                <div class="text-[11px] text-zinc-400 mt-0.5">EXIF 参数边框</div>
+            </a>
+        </div>
+
+        <a href="/" class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white text-xs font-semibold shadow-xs transition-colors">
+            <i class="fas fa-house text-[11px]"></i> 返回主站首页
+        </a>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="w-full max-w-5xl mx-auto px-6 py-6 text-center text-xs text-zinc-400 border-t border-zinc-200/80 dark:border-zinc-800/80">
+        <p>© 2026 超级工具箱 Pro · 100% 浏览器本地运算隐私保护</p>
+    </footer>
+
+</body>
+</html>

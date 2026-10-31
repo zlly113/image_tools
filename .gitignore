@@ -2,6 +2,7 @@
 *.bak
 *.tmp
 *.zip
+*.pdf
 .DS_Store
 Thumbs.db
 
@@ -34,3 +35,6 @@ dist/
 build/
 *.egg-info/
 scratch/
+.scratch/
+*PLAN*.md
+*SPEC*.md

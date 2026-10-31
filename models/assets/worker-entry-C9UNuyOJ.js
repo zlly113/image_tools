@@ -9092,7 +9092,7 @@ async function createRecModelSession(ort, modelBytes, backend, webgpuState) {
   const providerCandidates = getProviderCandidates(backend, webgpuState);
   return withTimeout(
     createSession(ort, modelBytes, providerCandidates),
-    6e4,
+    3e5,
     "Recognition model"
   );
 }

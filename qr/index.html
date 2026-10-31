@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线二维码生成器与识别工具箱 - 艺术美化/带Logo/纯本地离线解析 | 超级工具箱 Pro</title>
+    <meta name="description" content="免费在线二维码生成与识别工具箱。支持自定义圆角、点状艺术码元、渐变色、中心Logo嵌入与高分辨率矢量SVG/PNG导出；支持上传图片离线抗噪识别解码。100% 浏览器本地运算，保护数据与隐私零泄漏。">
+    <meta name="keywords" content="二维码生成器, 在线生成二维码, 带Logo二维码, 二维码美化, 二维码识别, 二维码解析, 识别二维码, 二维码纠错等级, 纯本地二维码">
+    <link rel="canonical" href="https://www.hhdzai.top/qr/">
+    <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+
+    <!-- Open Graph / SEO -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.hhdzai.top/qr/">
+    <meta property="og:title" content="在线二维码生成器与识别工具箱 - 艺术美化/带Logo/纯本地离线解析 | 超级工具箱 Pro">
+    <meta property="og:description" content="100% 浏览器本地生成与离线识别二维码，支持高精度艺术码元、中心Logo嵌入、无损矢量SVG与超清PNG导出。">
+    <meta property="og:image" content="https://www.hhdzai.top/icons/icon-512.png">
+
+    <!-- Tailwind CSS (本地部署) -->
+    <script src="/models/tailwindcss.js?v=1.1"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#09090b',
+                        darkCard: '#18181b',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+
+    <!-- 4-Tier Schema.org 结构化数据 (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "@id": "https://www.hhdzai.top/qr/#webapp",
+          "name": "在线二维码生成器与离线识别工具箱 (QR Code Studio)",
+          "url": "https://www.hhdzai.top/qr/",
+          "applicationCategory": "UtilityApplication",
+          "operatingSystem": "All",
+          "description": "基于客户端原生技术的在线二维码生成与识别工具箱。支持自定义圆角、点阵、艺术码元、渐变色、中心Logo嵌入与高分辨率矢量SVG/PNG导出；支持上传图片离线抗噪识别解码。100% 浏览器本地运算，保护数据与隐私零泄漏。",
+          "browserRequirements": "Requires JavaScript. Requires HTML5 Canvas & Web Workers.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "CNY"
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://www.hhdzai.top/qr/#breadcrumb",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "超级工具箱首页",
+              "item": "https://www.hhdzai.top/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "二维码工具箱",
+              "item": "https://www.hhdzai.top/qr/"
+            }
+          ]
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://www.hhdzai.top/qr/#howto",
+          "name": "如何使用在线二维码工具箱生成艺术美化二维码或离线识别解析",
+          "description": "从输入内容、选择码元与Logo美化到导出超清矢量图，以及上传图片本地抗噪识别的完整指南。",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "position": 1,
+              "name": "输入目标网址或文本内容",
+              "text": "在输入框中填入需要转换的网页链接 (URL)、Wi-Fi 连接配置、名片信息或任意文本内容，系统即刻实时生成预览。"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 2,
+              "name": "自定义码元样式与中心 Logo",
+              "text": "选择极简、圆角、点状或液态艺术码元样式，自由调节前景色与背景色；可上传品牌 Logo 并自动适配 H 级高容错率与保护边距。"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 3,
+              "name": "导出高清 PNG 或矢量 SVG",
+              "text": "根据使用场景选择 512px 至 2048px 印刷分辨率 PNG，或无损无限放大的矢量 SVG 文件进行下载保存。"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 4,
+              "name": "上传图片或截图进行离线解码",
+              "text": "切换至“上传图片识别”面板，将包含二维码的图片拖拽导入，jsQR 引擎在本地毫秒级解析出文本或网址，支持一键复制与安全访问。"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://www.hhdzai.top/qr/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "二维码容错级别 (L, M, Q, H) 该如何选择？中心加 Logo 需要什么级别？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "二维码标准内置 Reed-Solomon 纠错算法，分为 L (7%)、M (15%)、Q (25%)、H (30%) 四个损毁容忍等级。普通文本或纯链接推荐使用 M 级，码元稀疏清晰好扫；若在二维码中心嵌入品牌 Logo，必须选择 H 级（30% 容错率），因为 Logo 会遮挡中央部分码元，H 级能在丢失近三分之一数据点时依然确保手机相机秒级扫出。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "为什么有些生成的艺术美化二维码扫不出来？有哪些关键避坑要点？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "常见扫码失败原因有四点：一是前景色与背景色对比度不足（例如黄底白字或浅灰深灰）；二是反色颠倒（二维码必须是浅色背景、深色码元，绝大多数手机扫码器不支持白码黑底）；三是缺少外围“静区留白 (Quiet Zone)”，导致扫码器无法界定边界；四是 Logo 遮挡面积过大（建议控制在 15%~20% 以内并开启留白保护）。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "上传图片解析二维码时，我的内容或图片会被上传到服务器吗？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "绝对不会。本工具搭载 jsQR 纯前端图像解码算法，上传的图片直接在浏览器内存中的 HTML5 Canvas 上进行二值化与寻像单元定位，整个解码流程 100% 发生在本机客户端，没有任何网络上报或服务器中转，断网也能正常解析。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "为什么印刷宣传物料优先推荐下载矢量 SVG 格式？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "PNG 是栅格位图，放大至展架、海报或易拉宝尺寸时边缘会出现马赛克模糊，导致扫码困难。而 SVG 是数学矢量曲线描述格式，具有无限放大不失真、极小文件体积的特性，可直接导入 Illustrator、CorelDRAW、InDesign 等专业排版印刷软件中无损出片。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "本地生成的二维码是否有有效期限或扫描次数限制？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "永久有效，毫无限制！市面上许多商业短链接生成器会将您的网址包装为他们的中间跳转链接，日后会强制收费、插入广告甚至因域名被封导致二维码失效。而本工具是原生二维码，直接将您填写的原始文本或真实网址编码进矩阵中，不经过任何中间服务器，只要您的原始网址可用，该二维码就永久有效。"
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <style>
+        .checkerboard {
+            background-color: #ffffff;
+            background-image: linear-gradient(45deg, #f4f4f5 25%, transparent 25%),
+                              linear-gradient(-45deg, #f4f4f5 25%, transparent 25%),
+                              linear-gradient(45deg, transparent 75%, #f4f4f5 75%),
+                              linear-gradient(-45deg, transparent 75%, #f4f4f5 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+        }
+        .dark .checkerboard {
+            background-color: #18181b;
+            background-image: linear-gradient(45deg, #27272a 25%, transparent 25%),
+                              linear-gradient(-45deg, #27272a 25%, transparent 25%),
+                              linear-gradient(45deg, transparent 75%, #27272a 75%),
+                              linear-gradient(-45deg, transparent 75%, #27272a 75%);
+        }
+    </style>
+
+    <!-- 本地依赖库 (qr-code-styling & jsQR) -->
+    <script src="/models/qr-code-styling.min.js"></script>
+    <script src="/models/jsQR.min.js"></script>
+</head>
+<body class="bg-zinc-50 text-zinc-800 dark:bg-darkBg dark:text-zinc-200 min-h-screen font-sans flex flex-col transition-colors duration-200">
+
+    <!-- 顶部全局导航栏 -->
+    <header class="w-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-40 transition-colors">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="/" class="flex items-center gap-2.5 group" title="返回超级工具箱首页">
+                    <div class="w-8 h-8 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-sm shadow-xs group-hover:scale-105 transition-transform">
+                        <i class="fas fa-toolbox"></i>
+                    </div>
+                    <span class="font-bold text-base tracking-tight text-zinc-900 dark:text-zinc-100">超级工具箱 <span class="text-xs font-semibold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">Pro</span></span>
+                </a>
+                <span class="text-zinc-300 dark:text-zinc-700 hidden sm:inline">/</span>
+                <span class="text-xs font-semibold text-zinc-600 dark:text-zinc-300 hidden sm:inline flex items-center gap-1.5">
+                    <i class="fas fa-qrcode text-amber-500"></i> 二维码工具箱
+                </span>
+            </div>
+
+            <!-- 快捷跨工具导航 -->
+            <nav class="hidden md:flex items-center gap-4 text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                <a href="/bg-remover/" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">证件照换底色</a>
+                <a href="/ocr/" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">离线文字识别 OCR</a>
+                <a href="/pdf-tools/" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">PDF 魔法工具箱</a>
+                <a href="/image-converter/" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">批量压缩转换</a>
+            </nav>
+
+            <!-- 右侧操作区：主题切换与主站直达 -->
+            <div class="flex items-center gap-2.5">
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-xl text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" title="切换暗黑/明亮模式">
+                    <i class="fas fa-moon dark:hidden text-sm"></i>
+                    <i class="fas fa-sun hidden dark:inline text-sm text-amber-400"></i>
+                </button>
+                <a href="/" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 text-xs font-semibold rounded-xl transition-colors shadow-xs">
+                    <i class="fas fa-house text-[11px]"></i> 全部工具
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主体容器 -->
+    <main class="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-8 flex-grow space-y-8">
+
+        <!-- 页面 Hero 标头与 AI 搜索一句话摘要 -->
+        <section class="space-y-3">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                    <i class="fas fa-qrcode text-[11px]"></i> 原生 Canvas & jsQR 纯本地矩阵算法
+                </span>
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                    <i class="fas fa-shield-halved text-[11px]"></i> 零跳转中转 · 永久有效无广告
+                </span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight">
+                在线二维码生成器与艺术美化识别工具箱
+            </h1>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
+                基于浏览器原生矢量计算打造的隐私二维码工作台。支持自定义圆角、点阵、液态流动码元；支持中心 Logo 智能高容错嵌入、透明背景、超清印刷 PNG 与无损矢量 SVG 导出；内置本地抗噪解码器，拖入图片秒级识别文本与网址，100% 离线运算绝不上报。
+            </p>
+        </section>
+
+        <!-- 核心工作台 (Workbench) -->
+        <section class="bg-white dark:bg-zinc-900/90 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xs p-5 md:p-6 transition-colors">
+            
+            <!-- 顶栏标题与选项卡 (分段控制器) -->
+            <div class="flex flex-col sm:flex-row items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4 mb-5 gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center shadow-xs">
+                        <i class="fa-solid fa-qrcode text-base"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-zinc-900 dark:text-zinc-100">二维码生成与识别工作台</h2>
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">本地化美化生成与抗噪解码 · 100% 浏览器离线运行</p>
+                    </div>
+                </div>
+                
+                <!-- 顶层页签导航 (分段控制器)：切换 生成与美化 / 上传图片识别 -->
+                <div class="bg-zinc-100 dark:bg-zinc-800/90 p-1 rounded-xl border border-zinc-200/80 dark:border-zinc-700/60 flex gap-1">
+                    <button onclick="switchQRSubTab('generate')" id="btn-qr-generate" class="px-3.5 py-1.5 text-xs md:text-sm font-semibold rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-xs transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-wand-magic-sparkles text-xs"></i><span>生成与美化</span>
+                    </button>
+                    <button onclick="switchQRSubTab('decode')" id="btn-qr-decode" class="px-3.5 py-1.5 text-xs md:text-sm font-medium rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-expand text-xs"></i><span>上传图片识别</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 二维码工具主区 -->
+            <div id="panel-lt-qrcode" class="flex flex-col flex-grow">
+
+                <!-- 1. 二维码生成与美化面板 -->
+                <div id="panel-qr-generate" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- 左侧配置区 (7列) -->
+                    <div class="lg:col-span-7 flex flex-col gap-4">
+                        <!-- 内容输入 -->
+                        <div>
+                            <label class="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1.5">二维码内容 (网址或文本)</label>
+                            <textarea id="qr-input-text" rows="3" class="w-full px-3 py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-blue-500 text-xs resize-none" placeholder="输入你想转换的网址、文字内容...（输入后实时响应）">https://www.hhdzai.top</textarea>
+                        </div>
+
+                        <!-- 快捷主题预设 -->
+                        <div>
+                            <label class="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-2">快捷设计预设</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                <button type="button" class="qr-preset-option flex flex-col items-center gap-1.5 p-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/40 hover:border-zinc-400 dark:hover:border-zinc-500 transition-colors text-xs font-medium cursor-pointer" data-preset="minimal">
+                                    <span class="w-5 h-5 rounded bg-zinc-900 border border-zinc-400"></span>
+                                    <span>标准极简</span>
+                                </button>
+                                <button type="button" class="qr-preset-option flex flex-col items-center gap-1.5 p-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/40 hover:border-zinc-400 dark:hover:border-zinc-500 transition-colors text-xs font-medium cursor-pointer" data-preset="neon">
+                                    <span class="w-5 h-5 rounded bg-gradient-to-tr from-cyan-400 to-blue-600"></span>
+                                    <span>暗夜荧光</span>
+                                </button>
+                                <button type="button" class="qr-preset-option flex flex-col items-center gap-1.5 p-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/40 hover:border-zinc-400 dark:hover:border-zinc-500 transition-colors text-xs font-medium cursor-pointer" data-preset="business">
+                                    <span class="w-5 h-5 rounded bg-white border border-zinc-400 flex items-center justify-center text-[7px] font-bold text-zinc-800">LOGO</span>
+                                    <span>商务轻奢</span>
+                                </button>
+                                <button type="button" class="qr-preset-option flex flex-col items-center gap-1.5 p-2 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/40 hover:border-zinc-400 dark:hover:border-zinc-500 transition-colors text-xs font-medium cursor-pointer" data-preset="fresh">
+                                    <span class="w-5 h-5 rounded bg-gradient-to-r from-emerald-500 to-teal-500"></span>
+                                    <span>清新质感</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 外观配置区 (色彩与形状) -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                            <!-- 颜色设置 -->
+                            <div class="p-3.5 rounded-xl border border-zinc-200/80 dark:border-zinc-700/60 bg-zinc-50 dark:bg-zinc-800/30 flex flex-col gap-2.5">
+                                <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300">颜色设置</span>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-zinc-600 dark:text-zinc-400">前景色 (码元)</span>
+                                    <div class="flex items-center gap-2">
+                                        <input type="color" id="qr-color-fore" value="#000000" class="w-7 h-7 rounded cursor-pointer border border-zinc-300 dark:border-zinc-600 bg-transparent">
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-zinc-600 dark:text-zinc-400">背景色</span>
+                                    <div class="flex items-center gap-2">
+                                        <label class="flex items-center gap-1 text-[11px] text-zinc-500 mr-1.5 cursor-pointer">
+                                            <input type="checkbox" id="qr-bg-transparent" class="rounded text-zinc-900 focus:ring-zinc-900"> <span>透明背景</span>
+                                        </label>
+                                        <input type="color" id="qr-color-bg" value="#ffffff" class="w-7 h-7 rounded cursor-pointer border border-zinc-300 dark:border-zinc-600 bg-transparent">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 样式与形状 -->
+                            <div class="p-3.5 rounded-xl border border-zinc-200/80 dark:border-zinc-700/60 bg-zinc-50 dark:bg-zinc-800/30 flex flex-col gap-2.5">
+                                <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300">形状设计</span>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-zinc-600 dark:text-zinc-400">码元样式</span>
+                                    <select id="qr-style-dots" class="text-xs px-2 py-1 rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 focus:outline-none">
+                                        <option value="square">直角正方形</option>
+                                        <option value="rounded">舒适圆角</option>
+                                        <option value="dots">流线点状</option>
+                                        <option value="classy">经典艺术</option>
+                                        <option value="classy-rounded">艺术圆角</option>
+                                        <option value="extra-rounded">极圆液态</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-zinc-600 dark:text-zinc-400">定位角样式</span>
+                                    <select id="qr-style-corners" class="text-xs px-2 py-1 rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 focus:outline-none">
+                                        <option value="square">正方形</option>
+                                        <option value="dot">圆点状</option>
+                                        <option value="rounded">圆弧形</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Logo 与高阶配置 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                            <!-- Logo 嵌入 -->
+                            <div class="p-3.5 rounded-xl border border-zinc-200/80 dark:border-zinc-700/60 bg-zinc-50 dark:bg-zinc-800/30 flex flex-col gap-2.5">
+                                <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300">中心 Logo 嵌入</span>
+                                <div class="flex flex-col gap-2">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <input type="file" id="qr-logo-file" accept="image/*" class="hidden">
+                                        <button type="button" onclick="document.getElementById('qr-logo-file').click()" class="px-3 py-1.5 bg-zinc-200/80 hover:bg-zinc-300/80 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-zinc-800 dark:text-zinc-200 border border-zinc-300 dark:border-zinc-600 rounded-lg text-xs font-medium transition-colors w-full text-center cursor-pointer">
+                                            <i class="fa-solid fa-cloud-arrow-up mr-1.5"></i><span>选择 Logo 图片</span>
+                                        </button>
+                                        <button type="button" id="btn-qr-clear-logo" class="px-2.5 py-1.5 bg-zinc-100 hover:bg-rose-50 hover:text-rose-600 dark:bg-zinc-800 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 rounded-lg border border-zinc-200 dark:border-zinc-700 text-xs text-zinc-500 transition-colors hidden" title="移除 Logo">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </div>
+                                    <div id="qr-logo-settings" class="hidden flex flex-col gap-2 pt-1 border-t border-zinc-200 dark:border-zinc-700">
+                                        <div class="flex items-center justify-between text-[11px] text-zinc-500">
+                                            <span>Logo 占比: <span id="qr-logo-size-label">15%</span></span>
+                                            <input type="range" id="qr-logo-size" min="0.1" max="0.25" step="0.01" value="0.15" class="w-24">
+                                        </div>
+                                        <label class="flex items-center gap-1 text-[11px] text-zinc-500 cursor-pointer">
+                                            <input type="checkbox" id="qr-logo-margin" checked class="rounded text-zinc-900"> <span>留白保护区 (推荐)</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 分辨率与容错 -->
+                            <div class="p-3.5 rounded-xl border border-zinc-200/80 dark:border-zinc-700/60 bg-zinc-50 dark:bg-zinc-800/30 flex flex-col gap-2.5">
+                                <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300">输出与容错率</span>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-zinc-600 dark:text-zinc-400">容错级别</span>
+                                    <select id="qr-error-level" class="text-xs px-2 py-1 rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 focus:outline-none">
+                                        <option value="AUTO">智能自动选择</option>
+                                        <option value="L">L (7% 损毁容错)</option>
+                                        <option value="M">M (15% 损毁容错)</option>
+                                        <option value="Q">Q (25% 损毁容错)</option>
+                                        <option value="H">H (30% 损毁容错)</option>
+                                    </select>
+                                </div>
+                                <p id="qr-logo-error-tip" class="hidden text-[10px] text-amber-600 dark:text-amber-400 font-medium">已自动提升至 H 级高容错以保证含 Logo 时正常扫出</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-zinc-600 dark:text-zinc-400">尺寸规格</span>
+                                    <select id="qr-size" class="text-xs px-2 py-1 rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 focus:outline-none">
+                                        <option value="256">256 x 256 px</option>
+                                        <option value="512" selected>512 x 512 px (推荐)</option>
+                                        <option value="1024">1024 x 1024 px (高清海报)</option>
+                                        <option value="2048">2048 x 2048 px (超清印刷)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右侧实时预览与操作 (5列) -->
+                    <div class="lg:col-span-5 flex flex-col items-center justify-between p-5 bg-zinc-50 dark:bg-zinc-800/40 rounded-xl border border-zinc-200 dark:border-zinc-700/80 min-h-[360px] gap-5">
+                        <div class="w-full text-center">
+                            <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block mb-3">实时美化预览舞台</span>
+                            
+                            <!-- 二维码画布包裹框 -->
+                            <div class="relative w-64 h-64 mx-auto rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-700 checkerboard flex items-center justify-center bg-white shadow-xs">
+                                <!-- 二维码挂载点 -->
+                                <div id="qr-canvas-mount" class="w-[230px] h-[230px] flex items-center justify-center"></div>
+                                <!-- 空白占位符 -->
+                                <div id="qr-empty-placeholder" class="absolute inset-0 flex items-center justify-center bg-zinc-50 dark:bg-zinc-800 text-zinc-400 text-xs text-center px-6 hidden">
+                                    输入内容以生成美化二维码
+                                </div>
+                                <!-- 透明遮罩 img 镜像层 (支持手机长按保存) -->
+                                <img id="qr-img-overlay" class="absolute inset-0 w-full h-full object-contain cursor-pointer hidden" alt="长按保存二维码">
+                            </div>
+                            <p class="text-[11px] text-zinc-400 dark:text-zinc-500 mt-2.5 font-medium">
+                                <i class="fa-solid fa-circle-info mr-1"></i>PC端可一键复制，手机端可长按二维码直接保存
+                            </p>
+                            <div id="qr-contrast-warning" class="hidden text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 p-2 rounded-lg text-left mt-2">
+                            </div>
+                        </div>
+
+                        <!-- 操作控制台 -->
+                        <div class="w-full flex flex-col gap-2">
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" onclick="copyQrToClipboard()" id="btn-qr-copy" class="flex items-center justify-center gap-1.5 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 rounded-lg text-xs font-semibold transition-colors shadow-xs">
+                                    <i class="fa-regular fa-copy"></i><span>复制图片</span>
+                                </button>
+                                <button type="button" onclick="printQRCode()" id="btn-qr-print" class="flex items-center justify-center gap-1.5 py-2.5 bg-zinc-200/80 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-zinc-800 dark:text-zinc-200 rounded-lg text-xs font-semibold transition-colors">
+                                    <i class="fa-solid fa-print"></i><span>打印码图</span>
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" onclick="downloadQRCode('png')" id="btn-qr-png" class="flex items-center justify-center gap-1.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition-colors shadow-xs">
+                                    <i class="fa-solid fa-download"></i><span>下载 PNG</span>
+                                </button>
+                                <button type="button" onclick="downloadQRCode('svg')" id="btn-qr-svg" class="flex items-center justify-center gap-1.5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold transition-colors shadow-xs">
+                                    <i class="fa-solid fa-file-image"></i><span>下载矢量 SVG</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. 二维码识别与解码面板 -->
+                <div id="panel-qr-decode" class="grid grid-cols-1 lg:grid-cols-12 gap-6 hidden">
+                    <!-- 左侧上传拖拽区 (6列) -->
+                    <div class="lg:col-span-6">
+                        <div id="qr-dropzone" onclick="document.getElementById('qr-decode-file').click()" class="w-full h-80 border-2 border-dashed border-zinc-300 dark:border-zinc-700 hover:border-zinc-500 rounded-xl flex flex-col items-center justify-center gap-3 cursor-pointer bg-zinc-50/50 dark:bg-zinc-800/20 transition-colors p-6 text-center">
+                            <input type="file" id="qr-decode-file" accept="image/*" class="hidden">
+                            <div class="w-12 h-12 rounded-xl bg-zinc-200/80 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-qrcode"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-semibold text-zinc-800 dark:text-zinc-200">上传包含二维码的图片</p>
+                                <p class="text-[11px] text-zinc-400 mt-1">支持拖拽图片到这里，或点击此处选择文件</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右侧解析结果区 (6列) -->
+                    <div class="lg:col-span-6 flex flex-col justify-between p-5 bg-zinc-50 dark:bg-zinc-800/40 rounded-xl border border-zinc-200 dark:border-zinc-700/80 min-h-[300px]">
+                        <div class="flex flex-col flex-grow">
+                            <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block mb-2.5">本地解码结果</span>
+                            
+                            <!-- 成功结果展示 -->
+                            <div id="qr-decode-success" class="hidden flex-grow flex flex-col gap-3">
+                                <div class="flex-grow">
+                                    <textarea id="qr-decode-result-text" readonly rows="6" class="w-full px-3 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200 text-xs font-mono focus:outline-none resize-none"></textarea>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button type="button" onclick="copyQRDecodedText()" class="flex-1 flex items-center justify-center gap-1.5 py-2 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 rounded-lg text-xs font-semibold transition-colors">
+                                        <i class="fa-regular fa-copy"></i><span>复制文本</span>
+                                    </button>
+                                    <a id="btn-qr-decode-open" href="#" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center justify-center gap-1.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition-colors hidden">
+                                        <i class="fa-solid fa-arrow-up-right-from-square"></i><span>访问链接</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- 初始未解析状态 -->
+                            <div id="qr-decode-empty" class="flex-grow flex flex-col items-center justify-center text-center text-zinc-400 dark:text-zinc-500 py-8">
+                                <i class="fa-solid fa-magnifying-glass-chart text-3xl mb-2 opacity-60"></i>
+                                <p class="text-xs font-medium">暂无解析数据，请在左侧上传二维码图片</p>
+                            </div>
+                            <!-- 错误提示 -->
+                            <div id="qr-decode-error" class="hidden flex-grow flex flex-col items-center justify-center text-center text-rose-500 py-8">
+                                <i class="fa-solid fa-triangle-exclamation text-3xl mb-2"></i>
+                                <p class="text-xs font-semibold">未检测到有效的二维码</p>
+                                <p class="text-[11px] text-zinc-400 mt-1 px-4">请上传清晰、无遮挡且对比度适中的二维码图片</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 详细使用指南 (HowTo 结构化文本) -->
+        <section class="bg-white dark:bg-zinc-900/90 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xs p-6 md:p-8 space-y-6">
+            <div>
+                <h2 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 flex items-center gap-2">
+                    <i class="fas fa-list-ol text-amber-500 text-base"></i>
+                    如何高效使用本站二维码工具箱？
+                </h2>
+                <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                    无论是生成高质感的品牌宣传码，还是本地安全识别敏感二维码，只需简单几步：
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30">
+                    <div class="w-7 h-7 rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-xs mb-3">1</div>
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1">输入文本或目标网址</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        在输入框输入需要转换的真实 URL 或纯文本。实时响应生成，支持字符无缝动态刷新。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30">
+                    <div class="w-7 h-7 rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-xs mb-3">2</div>
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1">定制码元与品牌 Logo</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        挑选标准极简、暗夜荧光或商务轻奢预设；上传企业中心 Logo，系统自动切换为最高 H 级纠错。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30">
+                    <div class="w-7 h-7 rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-xs mb-3">3</div>
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1">导出超清位图或矢量</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        线上分享下载 512px PNG 或直接一键复制到剪贴板；专业线下大屏喷绘印刷推荐导出无损矢量 SVG。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30">
+                    <div class="w-7 h-7 rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-xs mb-3">4</div>
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1">图片解码与安全访问</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        切换至“上传图片识别”，拖入截图或照片，本地 jsQR 毫秒级抗噪解码，杜绝任何数据上云。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 知识库：二维码纠错级别 (Error Correction) 深度对比 -->
+        <section class="bg-white dark:bg-zinc-900/90 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xs p-6 md:p-8 space-y-6">
+            <div>
+                <h2 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 flex items-center gap-2">
+                    <i class="fas fa-microchip text-indigo-500 text-base"></i>
+                    二维码容错等级 (Error Correction Level) 深度解析
+                </h2>
+                <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                    二维码之所以能够被部分遮挡（如嵌入 Logo）或磨损污损后依然完整扫出，归功于其内置的 Reed-Solomon 代数纠错算法：
+                </p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs sm:text-sm border-collapse">
+                    <thead>
+                        <tr class="border-b border-zinc-200 dark:border-zinc-700 text-zinc-400 text-xs">
+                            <th class="py-3 px-4 font-semibold">容错等级</th>
+                            <th class="py-3 px-4 font-semibold">数据恢复能力</th>
+                            <th class="py-3 px-4 font-semibold">码元点阵密度</th>
+                            <th class="py-3 px-4 font-semibold">最佳适用业务场景</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800/60 text-zinc-700 dark:text-zinc-300">
+                        <tr>
+                            <td class="py-3.5 px-4 font-bold text-zinc-900 dark:text-zinc-100">Level L (Low)</td>
+                            <td class="py-3.5 px-4 font-mono text-emerald-600 dark:text-emerald-400 font-bold">~7% 损毁容忍</td>
+                            <td class="py-3.5 px-4">点阵最稀疏、点距最大</td>
+                            <td class="py-3.5 px-4 text-xs text-zinc-500 dark:text-zinc-400">超远距离扫描、LED 显示屏展示、极低像素摄像头环境或内容文本极长时</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3.5 px-4 font-bold text-zinc-900 dark:text-zinc-100">Level M (Medium)</td>
+                            <td class="py-3.5 px-4 font-mono text-blue-600 dark:text-blue-400 font-bold">~15% 损毁容忍</td>
+                            <td class="py-3.5 px-4">点阵密度适中</td>
+                            <td class="py-3.5 px-4 text-xs text-zinc-500 dark:text-zinc-400"><strong>行业默认通用标准</strong>。手机网页分享、电子票据、公众号推广、产品包装说明</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3.5 px-4 font-bold text-zinc-900 dark:text-zinc-100">Level Q (Quartile)</td>
+                            <td class="py-3.5 px-4 font-mono text-purple-600 dark:text-purple-400 font-bold">~25% 损毁容忍</td>
+                            <td class="py-3.5 px-4">点阵相对密集</td>
+                            <td class="py-3.5 px-4 text-xs text-zinc-500 dark:text-zinc-400">工业物流标签、户外耐候性条码、易受油污刮擦的设备铭牌</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3.5 px-4 font-bold text-zinc-900 dark:text-zinc-100">Level H (High)</td>
+                            <td class="py-3.5 px-4 font-mono text-rose-600 dark:text-rose-400 font-bold">~30% 损毁容忍</td>
+                            <td class="py-3.5 px-4">点阵最密集、冗余纠错码最多</td>
+                            <td class="py-3.5 px-4 text-xs text-zinc-500 dark:text-zinc-400"><strong>中心嵌入品牌 Logo 必选</strong>。即使 Logo 遮盖了近三分之一的核心区域，也能瞬间扫出</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 知识库：保证 100% 识别率的 5 大黄金设计准则 -->
+        <section class="bg-white dark:bg-zinc-900/90 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xs p-6 md:p-8 space-y-6">
+            <div>
+                <h2 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 flex items-center gap-2">
+                    <i class="fas fa-wand-magic-sparkles text-amber-500 text-base"></i>
+                    确保二维码 100% 秒级扫出的 5 大黄金设计法则
+                </h2>
+                <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                    二维码美化不仅要好看，更要保证在各种光照与不同手机摄像头下的识别率：
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30 space-y-1.5">
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                        <i class="fas fa-circle-check text-emerald-500"></i> 1. 坚持“浅底深码”，避免反色颠倒
+                    </h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed text-xs">
+                        QR 码国际标准定义中，定位寻像角与数据点默认是黑色的。目前微信、支付宝及绝大多数手机相机对“黑底白码”的反色图像识别极其迟钝甚至直接无法识别。请务必保持背景明亮、码元深色。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30 space-y-1.5">
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                        <i class="fas fa-circle-check text-emerald-500"></i> 2. 保证足够的明度对比度 (Contrast)
+                    </h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed text-xs">
+                        避免使用“黄底白字”、“浅粉配浅紫”等低反差配色方案。系统内置了自动色彩反差计算检测，当明度差低于安全阈值时会弹出预警，确保暗光环境下摄像头依然能精准抽离二值矩阵。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30 space-y-1.5">
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                        <i class="fas fa-circle-check text-emerald-500"></i> 3. 严格保留四周静区 (Quiet Zone)
+                    </h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed text-xs">
+                        二维码四周至少需要保留相当于 4 个码元宽度的纯空白区域（静区）。若将二维码紧贴复杂图案边框排版，扫描仪的边缘检测算法将无法精确定位寻像回字标的边界，引发识别失败。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30 space-y-1.5">
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                        <i class="fas fa-circle-check text-emerald-500"></i> 4. Logo 面积建议控制在 15%~20%
+                    </h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed text-xs">
+                        过大的 Logo 会遮挡超过 30% 的纠错能力阈值，尤其是绝不能遮盖三个角上的“回字形”定位探测图形。开启本站自带的“Logo 留白保护区”可以在图标四周生成保护带，极大改善解码稳定性。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 知识库：原生二维码与短链接跳转二维码的核心差异 -->
+        <section class="bg-white dark:bg-zinc-900/90 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xs p-6 md:p-8 space-y-6">
+            <div>
+                <h2 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 flex items-center gap-2">
+                    <i class="fas fa-shield-halved text-rose-500 text-base"></i>
+                    为什么必须警惕使用第三方的“活码短链”生成器？
+                </h2>
+                <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                    很多商业工具声称支持“随时修改目标网址”或“统计扫码数据”，其底层逻辑是将用户的真实网址替换为第三方的短网址跳转服务：
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-5 rounded-xl border border-rose-200 dark:border-rose-900/50 bg-rose-50/30 dark:bg-rose-950/20 space-y-2">
+                    <div class="flex items-center gap-2 text-rose-600 dark:text-rose-400 font-bold text-sm">
+                        <i class="fas fa-triangle-exclamation"></i> 第三方短链活码的巨大风险
+                    </div>
+                    <ul class="text-xs text-zinc-600 dark:text-zinc-400 space-y-1.5 leading-relaxed list-disc pl-4">
+                        <li><strong>随时失效风险</strong>：一旦服务商倒闭、域名被微信拦截红标封禁或未续费，印在几万张宣传册上的二维码将永久沦为废纸。</li>
+                        <li><strong>隐私与劫持隐患</strong>：中间跳转服务器可以记录所有扫码用户的 IP、设备型号、精确地理位置，甚至强制插入弹窗广告或流量劫持。</li>
+                        <li><strong>后期勒索收费</strong>：某些平台先免费吸引打印，待物料大规模铺开后限制每天仅能扫描 50 次，逼迫用户购买高昂会员升级。</li>
+                    </ul>
+                </div>
+
+                <div class="p-5 rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50/30 dark:bg-emerald-950/20 space-y-2">
+                    <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-sm">
+                        <i class="fas fa-check-circle"></i> 超级工具箱原生纯静态二维码的优势
+                    </div>
+                    <ul class="text-xs text-zinc-600 dark:text-zinc-400 space-y-1.5 leading-relaxed list-disc pl-4">
+                        <li><strong>真实直链直达</strong>：直接将真实目标 URL 编码为几何点阵，扫码时手机摄像头直接解析出您的域名并直接跳转，零中间链路。</li>
+                        <li><strong>物理层面永久有效</strong>：不依赖任何第三方服务器存在。只要您的目标网址本身正常运营，印刷在包装盒上的二维码 100 年后依然可用。</li>
+                        <li><strong>绝对隐私与安全</strong>：代码完全开源透明运行在本地浏览器，零数据留存，零网络嗅探，合规安全。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 常见问题解答 (FAQ) -->
+        <section class="bg-white dark:bg-zinc-900/90 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xs p-6 md:p-8 space-y-6">
+            <div>
+                <h2 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 flex items-center gap-2">
+                    <i class="fas fa-circle-question text-blue-500 text-base"></i>
+                    二维码工具箱常见问题解答 (FAQ)
+                </h2>
+                <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                    关于矢量导出、Logo 嵌入与离线解析的热门答疑：
+                </p>
+            </div>
+
+            <div class="space-y-4 text-xs sm:text-sm">
+                <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60">
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100 mb-1.5 flex items-center gap-2">
+                        <i class="fas fa-file-image text-emerald-500 text-xs"></i>
+                        为什么印刷宣传物料优先推荐下载矢量 SVG 格式？
+                    </h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        PNG 是基于像素的位图，放大至户外海报或展会易拉宝大尺寸时边缘会产生马赛克模糊锯齿，导致镜头边缘采样失败而无法扫出。而 SVG 是基于数学矢量的曲线描述语言，可以无损放大到任意物理尺寸（甚至几十米广告牌）依然保持发丝级绝对锐利，并且可被 Adobe Illustrator 等设计软件直接编辑分层。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60">
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100 mb-1.5 flex items-center gap-2">
+                        <i class="fas fa-lock text-indigo-500 text-xs"></i>
+                        在“上传图片识别”中解析二维码，我的隐私内容或图片会被上传到云端吗？
+                    </h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        绝对不会。本工具使用的是纯前端由 WebAssembly / JavaScript 编写的 jsQR 视觉引擎。您上传的文件直接由浏览器原生 FileReader 加载并在当前标签页的独立内存中完成二值化与寻像采样。您可以随时按下 F12 查看“Network”网络面板，期间没有任何一条向外部发送数据的网络连接。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60">
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100 mb-1.5 flex items-center gap-2">
+                        <i class="fas fa-wifi text-amber-500 text-xs"></i>
+                        本工具支持生成一键连接 Wi-Fi 或电子名片 (vCard) 二维码吗？
+                    </h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        完全支持！只需在文本框中按照国际通用协议标准输入即可。例如生成免密连 Wi-Fi 二维码，直接输入：<code class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 font-mono text-[11px]">WIFI:S:MyWifiName;T:WPA;P:MyPassword;;</code>；手机相机对准扫码即可一键提示“加入网络”。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60">
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100 mb-1.5 flex items-center gap-2">
+                        <i class="fas fa-eye-slash text-purple-500 text-xs"></i>
+                        上传的二维码图片模糊、反光或倾斜导致无法识别怎么办？
+                    </h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        您可以先使用本站顶部的“图片处理工作站”将截图适当裁剪，去除四周多余杂乱背景；或者使用“高级画质增强”工具提高对比度并执行锐化滤镜，然后再拖入识别，识别成功率将大幅提升至接近 100%。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 关联工具推荐 -->
+        <section class="border-t border-zinc-200 dark:border-zinc-800 pt-8">
+            <h2 class="text-base font-bold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+                <i class="fas fa-cubes text-zinc-400"></i>
+                更多离线隐私在线工具
+            </h2>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <a href="/bg-remover/" class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-darkCard hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+                    <i class="fas fa-id-card text-emerald-500 mb-1.5 text-sm block"></i>
+                    <div class="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-500 transition-colors">证件照换底色</div>
+                    <div class="text-[11px] text-zinc-400 mt-0.5">白底/蓝底智能抠图</div>
+                </a>
+                <a href="/ocr/" class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-darkCard hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+                    <i class="fas fa-file-lines text-indigo-500 mb-1.5 text-sm block"></i>
+                    <div class="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-indigo-500 transition-colors">离线文字识别 OCR</div>
+                    <div class="text-[11px] text-zinc-400 mt-0.5">PaddleOCR 纯本地推理</div>
+                </a>
+                <a href="/pdf-tools/" class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-darkCard hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+                    <i class="fas fa-file-pdf text-rose-500 mb-1.5 text-sm block"></i>
+                    <div class="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-rose-500 transition-colors">PDF 魔法工具箱</div>
+                    <div class="text-[11px] text-zinc-400 mt-0.5">拆分提取转高清图片</div>
+                </a>
+                <a href="/image-converter/" class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-darkCard hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+                    <i class="fas fa-images text-cyan-500 mb-1.5 text-sm block"></i>
+                    <div class="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-cyan-500 transition-colors">批量图片转换压缩</div>
+                    <div class="text-[11px] text-zinc-400 mt-0.5">JPG/PNG/WEBP 互转</div>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 全局轻量 Toast 提示容器 -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- 页脚 -->
+    <footer class="w-full bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 py-8 px-4 sm:px-6 transition-colors mt-12">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500 dark:text-zinc-400">
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-zinc-900 dark:text-zinc-100">超级工具箱 Pro</span>
+                <span>· 100% 浏览器本地运算，零数据上传</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-4">
+                <a href="/about.html" class="hover:underline">关于我们</a>
+                <a href="/privacy.html" class="hover:underline">隐私政策</a>
+                <a href="/terms.html" class="hover:underline">服务条款</a>
+                <a href="/contact.html" class="hover:underline">联系方式</a>
+                <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="hover:underline">粤ICP备2026017857号</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 交互逻辑初始化脚本 (ES Module) -->
+    <script type="module">
+        import { initQRCodeModule, switchQRSubTab, downloadQRCode, copyQrToClipboard, printQRCode, regenerateQRCode, applyQRPreset, toggleQRTransparentBg, handleQRLogoUpload, clearQRLogo, adjustQRLogoSize, handleQRErrorLevelChange, handleQRDragOver, handleQRDragLeave, handleQRDrop, handleQRDecodeFile, copyQRDecodedText } from '/js/qrCode.js';
+        import { initTheme, toggleTheme } from '/js/utils.js';
+
+        window.toggleTheme = toggleTheme;
+        window.switchQRSubTab = switchQRSubTab;
+        window.downloadQRCode = downloadQRCode;
+        window.copyQrToClipboard = copyQrToClipboard;
+        window.printQRCode = printQRCode;
+        window.regenerateQRCode = regenerateQRCode;
+        window.applyQRPreset = applyQRPreset;
+        window.toggleQRTransparentBg = toggleQRTransparentBg;
+        window.handleQRLogoUpload = handleQRLogoUpload;
+        window.clearQRLogo = clearQRLogo;
+        window.adjustQRLogoSize = adjustQRLogoSize;
+        window.handleQRErrorLevelChange = handleQRErrorLevelChange;
+        window.handleQRDragOver = handleQRDragOver;
+        window.handleQRDragLeave = handleQRDragLeave;
+        window.handleQRDrop = handleQRDrop;
+        window.handleQRDecodeFile = handleQRDecodeFile;
+        window.copyQRDecodedText = copyQRDecodedText;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            initQRCodeModule();
+            console.log('[QR Code Landing] Initialized successfully.');
+        });
+    </script>
+
+</body>
+</html>

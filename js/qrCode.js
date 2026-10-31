@@ -1,6 +1,5 @@
 // js/qrCode.js
 import { showToast, copyTextToClipboard } from './utils.js';
-import { renderShortLinkHistory } from './shortLink.js';
 
 export let qrCodeInstance = null;
 export function getQrCodeInstance() {
@@ -42,35 +41,7 @@ const qrPresets = {
 };
 
 export function switchLinkToolTab(tabId) {
-    const qrBtn = document.getElementById('btn-lt-qrcode');
-    const shortlinkBtn = document.getElementById('btn-lt-shortlink');
-    const qrPanel = document.getElementById('panel-lt-qrcode');
-    const shortlinkPanel = document.getElementById('panel-lt-shortlink');
-
-    if (!qrBtn || !shortlinkBtn || !qrPanel || !shortlinkPanel) return;
-
-    const inactiveClass = "px-4 py-2 text-sm font-semibold rounded-lg transition-all text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200";
-    const activeClass = "px-4 py-2 text-sm font-semibold rounded-lg transition-all bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow-sm";
-
-    if (tabId === 'qrcode') {
-        qrBtn.className = activeClass;
-        shortlinkBtn.className = inactiveClass;
-        qrPanel.classList.remove('hidden');
-        shortlinkPanel.classList.add('hidden');
-        setTimeout(() => {
-            if (!qrCodeInstance) {
-                initQRCode();
-            } else {
-                regenerateQRCode();
-            }
-        }, 80);
-    } else {
-        qrBtn.className = inactiveClass;
-        shortlinkBtn.className = activeClass;
-        qrPanel.classList.add('hidden');
-        shortlinkPanel.classList.remove('hidden');
-        renderShortLinkHistory();
-    }
+    switchQRSubTab('generate');
 }
 
 export function switchQRSubTab(tabId) {
@@ -81,8 +52,8 @@ export function switchQRSubTab(tabId) {
 
     if (!genBtn || !decBtn || !genPanel || !decPanel) return;
 
-    const activeClass = "text-sm font-medium border-b-2 border-indigo-600 pb-2 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400";
-    const inactiveClass = "text-sm font-medium border-b-2 border-transparent pb-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200";
+    const activeClass = "px-3.5 py-1.5 text-xs md:text-sm font-semibold rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-xs transition-colors flex items-center gap-1.5";
+    const inactiveClass = "px-3.5 py-1.5 text-xs md:text-sm font-medium rounded-lg text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors flex items-center gap-1.5";
 
     if (tabId === 'generate') {
         genBtn.className = activeClass;

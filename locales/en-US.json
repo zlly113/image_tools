@@ -9,13 +9,13 @@
   "nav": {
     "image_station": "Image Studio",
     "pdf_station": "PDF Magic Studio",
-    "link_tools": "Link & QR Tools",
+    "link_tools": "QR Code Studio",
     "ocr": "Smart OCR Scanner"
   },
   "bottom_nav": {
     "image_station": "Image Studio",
     "pdf_station": "PDF Tools",
-    "link_tools": "QR & Link",
+    "link_tools": "QR Code",
     "ocr": "Smart OCR"
   },
   "tabs": {
@@ -113,8 +113,8 @@
     "preview_placeholder": "Upload photo to feel the magic"
   },
   "link_tools": {
-    "title": "Link & QR Toolbox",
-    "desc": "Offline QR code generation & decoding, secure and instant short link service.",
+    "title": "QR Code Studio",
+    "desc": "Offline QR code generation & decoding, 100% private in-browser processing.",
     "tab_qr": "QR Code Tools",
     "tab_shortlink": "Short Link Generator",
     "subtab_generate": "Generate & Beautify",
@@ -266,14 +266,16 @@
   },
   "faq": {
     "title": "Frequently Asked Questions (FAQ)",
+    "subtitle": "Pure client-side offline tools platform providing authoritative privacy and security guarantees",
+    "badge": "100% Local Browser Computing · Zero Server-side Privacy Leakage",
     "q1": "Is Super Toolbox Pro completely free?",
-    "a1": "Yes, all features on this platform (including smart ID photo maker, batch image converter, OCR text extraction, PDF converter) are 100% free online.",
-    "q2": "Will my images and files be uploaded to your server?",
-    "a2": "Never. We use pure client-side technologies (e.g. WebAssembly). All your images and documents are processed entirely on your local machine.",
-    "q3": "Which file formats are supported?",
-    "a3": "We support mutual conversion between common image formats (JPG, PNG, WEBP, GIF, ICO) as well as PDF to Word (Docx) with batch support.",
-    "q4": "What custom styles does the QR code generator support?",
-    "a4": "Supports custom foreground/background colors, dot patterns, corner styles, central logo embedding, and error levels, with one-click export to PNG, SVG, or clipboard."
+    "a1": "Yes! All features currently provided by Super Toolbox Pro (including high-precision PaddleOCR, ID photo background remover, collage maker, batch compression, format converter, photo filter, and QR code tools) are <strong>completely free to the public</strong> with no paywall.",
+    "q2": "Will my images, files, or personal data be uploaded to your server?",
+    "a2": "<strong>Never!</strong> This project is powered by pure client-side WebAssembly neural network inference engines and Canvas pipelines. All image processing and document recognition runs <strong>100% inside your local browser memory</strong>. No data ever leaves your device.",
+    "q3": "Does it support offline use or installation as a desktop app?",
+    "a3": "Yes! The platform fully supports the <strong>PWA (Progressive Web App) standard</strong>. In Chrome, Edge, or mobile browsers, click the 'Install App' icon to save it as a standalone desktop or mobile application. Once models are loaded, it works seamlessly even without an internet connection.",
+    "q4": "What model powers the local OCR? Does it support multi-page PDFs?",
+    "a4": "The engine is based on Baidu <strong>PaddleOCR (PP-OCRv6)</strong> lightweight deep learning offline models, accelerated by ONNX Runtime Web multithreaded WASM for sub-second recognition. It deeply integrates PDF.js to support page-by-page rendering or batch full-text extraction, with direct export to Word (.docx), aligned Excel (.xlsx), and plain text (.txt)."
   },
   "common": {
     "loading": "Loading...",

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多图长图拼接与徕卡风相机参数EXIF水印相框 - 在线图片排版工具 | 超级工具箱 Pro</title>
+    <meta name="description" content="免费在线多图拼接与徕卡风相机参数水印相框工具。支持垂直长图、横向拼接与智能网格排版，自动读取照片EXIF元数据（光圈、快门、ISO、焦距、机型）生成复古徕卡摄影边框。100% 浏览器本地合成，超清画质不压缩不上传。">
+    <meta name="keywords" content="多图拼接, 长图拼接, 在线拼图, 徕卡水印, 相机参数边框, EXIF水印, 摄影边框, 垂直拼图, 横向拼图, 九宫格排版">
+    <link rel="canonical" href="https://www.hhdzai.top/collage/">
+    <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+
+    <!-- Open Graph / SEO -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.hhdzai.top/collage/">
+    <meta property="og:title" content="多图长图拼接与徕卡风相机参数EXIF水印相框 - 在线图片排版工具 | 超级工具箱 Pro">
+    <meta property="og:description" content="100% 浏览器本地安全合成长图拼图，一键提取相机 EXIF 生成高级质感徕卡摄影相框，原图画质不压缩。">
+    <meta property="og:image" content="https://www.hhdzai.top/icons/icon-512.png">
+
+    <!-- Tailwind CSS (本地部署) -->
+    <script src="/models/tailwindcss.js?v=1.1"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#09090b',
+                        darkCard: '#18181b',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+
+    <!-- 4-Tier Schema.org 结构化数据 (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "@id": "https://www.hhdzai.top/collage/#webapp",
+          "name": "多图长图拼接与徕卡风EXIF水印相框 (Collage & Leica Watermark Studio)",
+          "url": "https://www.hhdzai.top/collage/",
+          "applicationCategory": "MultimediaApplication",
+          "operatingSystem": "All",
+          "description": "基于浏览器本地 Canvas 渲染引擎的专业多图排版与长图拼接工具。支持垂直无缝长图、水平宽幅拼接与智能多图网格排版，自动读取照片底层 EXIF 元数据（包括光圈、快门速度、ISO 感光度、等效焦距与拍摄设备型号）合成徕卡风艺术留白相框。纯本地运算，照片绝不上传。",
+          "browserRequirements": "Requires JavaScript. Requires HTML5 Canvas.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "CNY"
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://www.hhdzai.top/collage/#breadcrumb",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "超级工具箱首页",
+              "item": "https://www.hhdzai.top/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "多图拼接与EXIF水印",
+              "item": "https://www.hhdzai.top/collage/"
+            }
+          ]
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://www.hhdzai.top/collage/#howto",
+          "name": "如何使用在线拼图工具拼接多张长图或生成徕卡相机参数边框水印",
+          "description": "从批量导入照片、拖拽重排顺序、选择排版布局到开启 EXIF 相机参数相框并导出超清 JPG 的详细步骤。",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "position": 1,
+              "name": "导入多张照片",
+              "text": "点击上传区域或将本地多张照片批量拖拽进选框，系统自动读取每张照片的宽高与底层 EXIF 元数据。"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 2,
+              "name": "拖动缩略图微调排版次序",
+              "text": "在上方缩略图管理栏中，直接按住鼠标拖动照片卡片自由调换显示先后顺序，点击右上角叉号可随时移除选错的图片。"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 3,
+              "name": "选定排版布局与徕卡 EXIF 水印",
+              "text": "在垂直长图、水平横图或智能网格中任选一种；勾选开启“徕卡风 EXIF 水印”开关，系统将自动在照片下方生成经典留白底框并优雅印制拍摄参数。"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 4,
+              "name": "微调边距圆角并毫秒级导出",
+              "text": "拖动滑块调整图片之间的间隔距离与外边角弧度，挑选画板背景色，满意后点击“保存排版长图”即可保存无损超清大图。"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://www.hhdzai.top/collage/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "为什么有些照片开启“徕卡风 EXIF 水印”后显示“未知设备”或参数为空？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "相机或手机在拍摄时会自动将快门、光圈、ISO、焦距和设备型号写入文件头部的 EXIF 区域。如果该照片曾通过微信普通画质发送（未勾选原图）、经过截图、或者使用第三方修图软件滤镜另存过，这些操作通常会强行抹除或压缩丢失 EXIF 信息。建议导入相机导出的原片或手机相册原图以获得最完整的数据呈现。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "拼接超多张单反高清大图（如单张 20MB+）时会不会变模糊？画质能保证吗？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "本工具采用原生 HTML5 Canvas 高保真渲染管线，拼图时以输入照片的原始物理像素作为基准尺寸进行等比拼接，导出质量预设为 95% 超清 JPEG。绝不像某些小程序或商业网页端那样粗暴降采样到 720p，输出的大图即使放大数倍细节与毛发依然纤毫毕现。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "多图拼接是否限制照片数量？垂直长图最大能拼多长？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "本工具在软件层面上没有设置照片数量上限。但拼接长图的最大像素高度受限于用户当前浏览器底层硬件加速的 Canvas 尺寸限制（例如桌面 Chrome/Edge 单个 Canvas 极限高度约为 16384px 至 65536px 之间）。一般拼接 10~30 张常见照片完全流畅无阻。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "智能网格布局 (Grid Layout) 的排版逻辑是怎样的？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "智能网格模式会根据导入图片的总数量自动计算最佳行列矩阵（例如 4 张图自动排为 2×2，9 张图自动排为 3×3 九宫格）。每一行都会自适应居中对齐，配合可调节的间距与圆角参数，非常适合小红书配图、朋友圈九宫格以及商业海报设计。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "我的家庭照片或商业摄影作品上传拼接，会有隐私泄漏风险吗？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "100% 绝对安全！与需要把图片上传到远端云服务器处理的传统拼图网站不同，超级工具箱全部计算代码直接在您本地电脑或手机的浏览器中执行。图片在本地内存中绘制、叠加水印并导出下载，期间零网络流量传输，断网亦能完整使用。"
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+
+    <!-- 本地 EXIF 元数据提取库 -->
+    <script src="/libs/exif.min.js"></script>
+</head>
+<body class="bg-zinc-50 text-zinc-800 dark:bg-darkBg dark:text-zinc-200 min-h-screen font-sans flex flex-col transition-colors duration-200">
+
+    <!-- 顶部全局导航栏 -->
+    <header class="w-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-40 transition-colors">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="/" class="flex items-center gap-2.5 group" title="返回超级工具箱首页">
+                    <div class="w-8 h-8 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-sm shadow-xs group-hover:scale-105 transition-transform">
+                        <i class="fas fa-toolbox"></i>
+                    </div>
+                    <span class="font-bold text-base tracking-tight text-zinc-900 dark:text-zinc-100">超级工具箱 <span class="text-xs font-semibold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">Pro</span></span>
+                </a>
+                <span class="text-zinc-300 dark:text-zinc-700 hidden sm:inline">/</span>
+                <span class="text-xs font-semibold text-zinc-600 dark:text-zinc-300 hidden sm:inline flex items-center gap-1.5">
+                    <i class="fas fa-layer-group text-purple-500"></i> 多图拼接与 EXIF 边框
+                </span>
+            </div>
+
+            <!-- 快捷跨工具导航 -->
+            <nav class="hidden md:flex items-center gap-4 text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                <a href="/bg-remover/" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">证件照换底色</a>
+                <a href="/ocr/" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">离线文字识别 OCR</a>
+                <a href="/pdf-tools/" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">PDF 魔法工具箱</a>
+                <a href="/qr/" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">二维码工具箱</a>
+                <a href="/image-converter/" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">批量压缩转换</a>
+            </nav>
+
+            <!-- 右侧操作区：主题切换与主站直达 -->
+            <div class="flex items-center gap-2.5">
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-xl text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" title="切换暗黑/明亮模式">
+                    <i class="fas fa-moon dark:hidden text-sm"></i>
+                    <i class="fas fa-sun hidden dark:inline text-sm text-amber-400"></i>
+                </button>
+                <a href="/" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 text-xs font-semibold rounded-xl transition-colors shadow-xs">
+                    <i class="fas fa-house text-[11px]"></i> 全部工具
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主体容器 -->
+    <main class="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-8 flex-grow space-y-8">
+
+        <!-- 页面 Hero 标头与 AI 搜索一句话摘要 -->
+        <section class="space-y-3">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+                    <i class="fas fa-camera text-[11px]"></i> 本地 EXIF 相机元数据自动读取
+                </span>
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                    <i class="fas fa-shield-halved text-[11px]"></i> 100% 浏览器客户端合成 · 原图无损
+                </span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight">
+                多图长图拼接与徕卡风相机参数 EXIF 边框水印
+            </h1>
+            <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
+                无需复杂的专业修图软件，在浏览器内一键将多张照片拼接为垂直长图、水平宽幅画卷或九宫格智能画板。自动识别照片原生 EXIF 拍摄参数（相机型号、光圈 F 值、快门时间、ISO、焦距）并生成高级德系徕卡风留白边框，纯本地安全排版渲染。
+            </p>
+        </section>
+
+        <!-- 核心工作台 (Workbench) -->
+        <section class="bg-white dark:bg-zinc-900/90 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xs p-5 md:p-6 transition-colors">
+            
+            <!-- 顶栏标题 -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-5 border-b border-zinc-200 dark:border-zinc-800 gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center shadow-xs">
+                        <i class="fas fa-layer-group text-base"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-zinc-900 dark:text-zinc-100">多图拼图与摄影水印工作台</h2>
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">垂直/水平/网格自由布局 · 摄影相机参数相框 · 极速导出</p>
+                    </div>
+                </div>
+                <div class="text-xs text-zinc-500 font-mono flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span>Canvas 本地硬件加速就绪</span>
+                </div>
+            </div>
+
+            <!-- 核心交互双栏 -->
+            <div class="flex flex-col xl:flex-row gap-6">
+                <!-- 左侧：控制面板 (1/3) -->
+                <div class="w-full xl:w-1/3 flex flex-col gap-4">
+                    <!-- 步骤 1: 拖拽添加多图 -->
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">1. 拖拽添加多张照片</label>
+                        <div id="collageDropZone" class="w-full border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl p-4 text-center cursor-pointer hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors relative">
+                            <p class="text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-0.5">点击选择图片或批量拖拽照片至此</p>
+                            <p class="text-[11px] text-zinc-400">支持批量多选 · JPG, PNG, WEBP 原片</p>
+                            <input type="file" id="collageInput" accept="image/*" multiple class="absolute inset-0 opacity-0 cursor-pointer w-full h-full"/>
+                        </div>
+                    </div>
+                    
+                    <!-- 步骤 2: 缩略图排序区 -->
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5 flex justify-between">
+                            <span>2. 拖动缩略图调整顺序</span>
+                            <span id="collageCountText" class="text-zinc-400 font-mono text-xs">已选择: 0 张</span>
+                        </label>
+                        <div id="collageThumbnails" class="flex flex-wrap gap-2 min-h-[52px] p-2 bg-zinc-50 dark:bg-zinc-800/40 rounded-xl border border-zinc-200/80 dark:border-zinc-700/60">
+                            <p class="text-xs text-zinc-400 w-full text-center my-auto" id="collageThumbEmpty">暂无图片，请在上方添加</p>
+                        </div>
+                    </div>
+
+                    <!-- 步骤 3: 排版布局 -->
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">3. 选择排版布局</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="layout" value="vertical" class="peer sr-only" checked>
+                                <div class="p-2.5 border border-zinc-200 dark:border-zinc-700 rounded-lg text-center hover:bg-zinc-50 dark:hover:bg-zinc-800 peer-checked:border-zinc-900 peer-checked:bg-zinc-100 dark:peer-checked:border-zinc-200 dark:peer-checked:bg-zinc-800 transition-colors">
+                                    <span class="text-xs font-semibold flex items-center justify-center gap-1.5">
+                                        <i class="fas fa-arrows-up-down text-[11px]"></i> 垂直长图
+                                    </span>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="layout" value="horizontal" class="peer sr-only">
+                                <div class="p-2.5 border border-zinc-200 dark:border-zinc-700 rounded-lg text-center hover:bg-zinc-50 dark:hover:bg-zinc-800 peer-checked:border-zinc-900 peer-checked:bg-zinc-100 dark:peer-checked:border-zinc-200 dark:peer-checked:bg-zinc-800 transition-colors">
+                                    <span class="text-xs font-semibold flex items-center justify-center gap-1.5">
+                                        <i class="fas fa-arrows-left-right text-[11px]"></i> 水平横图
+                                    </span>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer col-span-2">
+                                <input type="radio" name="layout" value="grid" class="peer sr-only">
+                                <div class="p-2.5 border border-zinc-200 dark:border-zinc-700 rounded-lg text-center hover:bg-zinc-50 dark:hover:bg-zinc-800 peer-checked:border-zinc-900 peer-checked:bg-zinc-100 dark:peer-checked:border-zinc-200 dark:peer-checked:bg-zinc-800 transition-colors">
+                                    <span class="text-xs font-semibold flex items-center justify-center gap-1.5">
+                                        <i class="fas fa-th-large text-[11px]"></i> 智能网格居中铺满 (九宫格)
+                                    </span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 步骤 4: 参数与水印设置 -->
+                    <div class="space-y-3.5 bg-zinc-50 dark:bg-zinc-800/40 p-4 rounded-xl border border-zinc-200/80 dark:border-zinc-700/60">
+                        <!-- EXIF 水印开关 -->
+                        <div class="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-700 pb-3">
+                            <div>
+                                <h4 class="text-xs font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
+                                    <i class="fas fa-camera text-red-500"></i> 徕卡风 EXIF 水印相框
+                                </h4>
+                                <p class="text-[11px] text-zinc-400 mt-0.5">自动提取快门/光圈/ISO/机型参数</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="exifToggle" class="sr-only peer">
+                                <div class="w-10 h-5 bg-zinc-300 peer-focus:outline-none rounded-full peer dark:bg-zinc-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-zinc-600 peer-checked:bg-zinc-900 dark:peer-checked:bg-zinc-100"></div>
+                            </label>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1 flex justify-between">
+                                <span>图片间距</span>
+                                <span id="spacingValue" class="text-zinc-900 dark:text-zinc-100 font-mono font-bold">20px</span>
+                            </label>
+                            <input type="range" id="spacingRange" min="0" max="100" value="20" class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1 flex justify-between">
+                                <span>图片圆角</span>
+                                <span id="radiusValue" class="text-zinc-900 dark:text-zinc-100 font-mono font-bold">0px</span>
+                            </label>
+                            <input type="range" id="radiusRange" min="0" max="100" value="0" class="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">画板背景颜色</label>
+                            <div class="flex items-center gap-2.5">
+                                <input type="color" id="bgColorPickerCollage" value="#ffffff" class="h-8 w-10 rounded cursor-pointer border-0 p-0">
+                                <span id="bgColorHexCollage" class="text-xs font-mono uppercase text-zinc-700 dark:text-zinc-300 font-semibold">#FFFFFF</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="collageDownloadBtn" disabled class="w-full bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 font-semibold py-2.5 px-4 rounded-xl shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 mt-auto">
+                        <i class="fas fa-download text-xs"></i> 保存排版长图
+                    </button>
+                </div>
+
+                <!-- 右侧：预览区 (2/3) -->
+                <div class="w-full xl:w-2/3 flex flex-col">
+                    <label class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1.5">生成预览舞台</label>
+                    <div class="flex-grow border border-zinc-200 dark:border-zinc-700/80 rounded-xl bg-zinc-100 dark:bg-zinc-950 flex justify-center items-start p-4 overflow-auto no-scrollbar relative min-h-[500px]">
+                        <canvas id="collageCanvas" class="hidden shadow-md max-w-full max-h-[680px] object-contain"></canvas>
+                        <div id="collagePlaceholder" class="text-zinc-400 dark:text-zinc-500 flex flex-col items-center justify-center h-full w-full absolute inset-0">
+                            <svg class="w-10 h-10 mb-2 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <span class="text-xs">请在左侧上传并排列图片以开始排版</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 详细使用指南 (HowTo 结构化文本) -->
+        <section class="bg-white dark:bg-zinc-900/90 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xs p-6 md:p-8 space-y-6">
+            <div>
+                <h2 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 flex items-center gap-2">
+                    <i class="fas fa-list-ol text-purple-500 text-base"></i>
+                    如何制作超长图拼图或徕卡风摄影参数相框？
+                </h2>
+                <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                    仅需 4 步，无需任何 PS 基础即可生成专业级摄影长图与参数相框：
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30">
+                    <div class="w-7 h-7 rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-xs mb-3">1</div>
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1">批量导入相册原图</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        点击选框或直接将手机/相机拍摄的原图批量拖入。系统自动解析图片头部的 EXIF 信息。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30">
+                    <div class="w-7 h-7 rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-xs mb-3">2</div>
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1">拖拽调换播放顺序</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        在排序栏中按住鼠标左右拖拽缩略图卡片调整排列先后次序，点击红叉可随时移除。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30">
+                    <div class="w-7 h-7 rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-xs mb-3">3</div>
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1">激活徕卡 EXIF 水印</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        开启“徕卡风 EXIF 水印”开关，系统自动在每张照片底部追加经典白色边框，并生成红标参数。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30">
+                    <div class="w-7 h-7 rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-xs mb-3">4</div>
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1">无损导出高清长图</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        调整好画板间距与圆角后，点击保存按钮，浏览器本地渲染合成并极速触发下载保存。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 知识库：徕卡风 (Leica Style) 摄影水印的魅力与设计原理 -->
+        <section class="bg-white dark:bg-zinc-900/90 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xs p-6 md:p-8 space-y-6">
+            <div>
+                <h2 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 flex items-center gap-2">
+                    <i class="fas fa-camera-retro text-rose-500 text-base"></i>
+                    为什么摄影师都钟爱“徕卡风”留白相机参数相框？
+                </h2>
+                <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                    源于德系经典光学器材的审美传承，徕卡风格不仅是一种水印，更是一种严肃摄影记录的仪式感：
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30 space-y-2">
+                    <div class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center text-sm font-bold">1</div>
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100">经典画框留白隔离感</h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed text-xs">
+                        通过在照片四周特别是底部保留一定比例的纯白/纯黑安全边距，将观者的视线从手机屏幕的杂乱界面中隔绝开来，让摄影作品产生类似美术馆墙面装裱的视觉聚焦效果。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30 space-y-2">
+                    <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center text-sm font-bold">2</div>
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100">原生光学参数纪实记录</h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed text-xs">
+                        自动呈现等效焦距 (24mm/35mm/50mm/85mm)、光圈值 (F1.4/F2.8)、快门速度 (1/1000s) 以及 ISO 感光度。不仅是摄影技艺的直观佐证，更为街拍、纪实作品赋予了时光凝固的技术档案价值。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30 space-y-2">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-sm font-bold">3</div>
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100">极简几何红白排版美学</h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed text-xs">
+                        以经典的左侧设备型号粗体与右侧等宽参数排布，中间点缀醒目的纯红圆形标识。对比市面上花哨喧宾夺主的商业水印，徕卡风相框低调克制，从不掩盖主体光影情绪。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 知识库：垂直长图 vs 水平横图 vs 智能网格布局对比 -->
+        <section class="bg-white dark:bg-zinc-900/90 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xs p-6 md:p-8 space-y-6">
+            <div>
+                <h2 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 flex items-center gap-2">
+                    <i class="fas fa-table-cells text-indigo-500 text-base"></i>
+                    三大排版布局场景适配指南
+                </h2>
+                <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                    根据不同的社交媒体平台与视觉叙事节奏选择最佳拼接模式：
+                </p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs sm:text-sm border-collapse">
+                    <thead>
+                        <tr class="border-b border-zinc-200 dark:border-zinc-700 text-zinc-400 text-xs">
+                            <th class="py-3 px-4 font-semibold">排版布局</th>
+                            <th class="py-3 px-4 font-semibold">构图方向与算法</th>
+                            <th class="py-3 px-4 font-semibold">最适宜发布平台</th>
+                            <th class="py-3 px-4 font-semibold">设计排版建议</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-zinc-100 dark:divide-zinc-800/60 text-zinc-700 dark:text-zinc-300">
+                        <tr>
+                            <td class="py-3.5 px-4 font-bold text-zinc-900 dark:text-zinc-100">垂直长图 (Vertical)</td>
+                            <td class="py-3.5 px-4">纵向无限级联，图片宽度自动等宽对齐</td>
+                            <td class="py-3.5 px-4">小红书长图、微信公众号正文配图、知乎专栏、微博长微博</td>
+                            <td class="py-3.5 px-4 text-xs text-zinc-500 dark:text-zinc-400">适合记录旅行游记、长篇故事流水账、漫画连载，建议设置 15~25px 间隔避免画面拥挤</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3.5 px-4 font-bold text-zinc-900 dark:text-zinc-100">水平横图 (Horizontal)</td>
+                            <td class="py-3.5 px-4">横向平铺延展，图片高度自动等高对齐</td>
+                            <td class="py-3.5 px-4">网站 Banner 轮播、电影胶片宽画幅预览、B站视频长条缩略图</td>
+                            <td class="py-3.5 px-4 text-xs text-zinc-500 dark:text-zinc-400">适合展示同一场景的连续动作抓拍、全景分段接片，推荐配合黑底营造影院胶片感</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3.5 px-4 font-bold text-zinc-900 dark:text-zinc-100">智能网格 (Grid)</td>
+                            <td class="py-3.5 px-4">自适应计算黄金矩阵，多图自动居中铺满</td>
+                            <td class="py-3.5 px-4">朋友圈九宫格合成单张大图、电商主图多角度展示、摄影作品集封面</td>
+                            <td class="py-3.5 px-4 text-xs text-zinc-500 dark:text-zinc-400">自动根据图片总数计算最佳矩阵（4张排 2×2，9张排 3×3），配合圆角与白底极具设计感</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 常见问题解答 (FAQ) -->
+        <section class="bg-white dark:bg-zinc-900/90 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xs p-6 md:p-8 space-y-6">
+            <div>
+                <h2 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 flex items-center gap-2">
+                    <i class="fas fa-circle-question text-blue-500 text-base"></i>
+                    多图拼接常见问题解答 (FAQ)
+                </h2>
+                <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                    关于长图导出、EXIF 读取机制与画质表现的解答：
+                </p>
+            </div>
+
+            <div class="space-y-4 text-xs sm:text-sm">
+                <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60">
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100 mb-1.5 flex items-center gap-2">
+                        <i class="fas fa-file-shield text-emerald-500 text-xs"></i>
+                        拼接多张高分辨率大图时，画质会被压缩模糊吗？
+                    </h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        绝对不会。本工具使用 HTML5 Canvas 纯原生像素管线，在本地内存中直接以导入原图的物理分辨率（例如 4000×6000 像素）进行对齐绘制，导出 JPEG 采用 95% 超清质量因子。绝不像第三方小程序或云端网站那样自动强行压缩到 1000px 以内。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60">
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100 mb-1.5 flex items-center gap-2">
+                        <i class="fas fa-circle-exclamation text-amber-500 text-xs"></i>
+                        为什么某些手机微信发过来的图片无法提取出 EXIF 相机参数？
+                    </h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        这是由聊天软件的默认传输机制决定的。微信、QQ 默认发送图片时会强行抹除所有 EXIF 元数据以节省网络带宽并防止泄漏拍摄者 GPS 地理位置隐私。只有在发送时手动勾选了“原图”选项，文件头部的相机参数才会被完整保留。如需生成参数相框，请直接从系统原生相册中选择文件导入。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60">
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100 mb-1.5 flex items-center gap-2">
+                        <i class="fas fa-arrows-up-down-left-right text-purple-500 text-xs"></i>
+                        长图拼接对图片张数有限制吗？手机浏览器能拼 50 张以上吗？
+                    </h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        前端代码没有做任何人为张数限制。但请注意：手机浏览器的 GPU 内存通常比电脑小，如果拼接 50 张以上数千万像素的高清大图，整个画板的高度可能超过手机浏览器的最大单画布纹理限制（通常为 4096px 或 8192px），可能导致浏览器标签页闪退。若需拼接超长图，建议在电脑端 Chrome/Edge 打开本站进行操作。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60">
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100 mb-1.5 flex items-center gap-2">
+                        <i class="fas fa-lock text-indigo-500 text-xs"></i>
+                        拼接个人相册私密照片是否安全？
+                    </h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        100% 绝对物理级安全。超级工具箱全站坚持纯客户端架构，没有任何后台服务器存储或分析图片。您可以拔掉网线或开启飞行模式进行测试，拼图与水印功能依然完全正常运行。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 关联工具推荐 -->
+        <section class="border-t border-zinc-200 dark:border-zinc-800 pt-8">
+            <h2 class="text-base font-bold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+                <i class="fas fa-cubes text-zinc-400"></i>
+                更多离线隐私在线工具
+            </h2>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <a href="/bg-remover/" class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-darkCard hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+                    <i class="fas fa-id-card text-emerald-500 mb-1.5 text-sm block"></i>
+                    <div class="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-500 transition-colors">证件照换底色</div>
+                    <div class="text-[11px] text-zinc-400 mt-0.5">白底/蓝底智能抠图</div>
+                </a>
+                <a href="/ocr/" class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-darkCard hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+                    <i class="fas fa-file-lines text-indigo-500 mb-1.5 text-sm block"></i>
+                    <div class="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-indigo-500 transition-colors">离线文字识别 OCR</div>
+                    <div class="text-[11px] text-zinc-400 mt-0.5">PaddleOCR 纯本地推理</div>
+                </a>
+                <a href="/pdf-tools/" class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-darkCard hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+                    <i class="fas fa-file-pdf text-rose-500 mb-1.5 text-sm block"></i>
+                    <div class="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-rose-500 transition-colors">PDF 魔法工具箱</div>
+                    <div class="text-[11px] text-zinc-400 mt-0.5">拆分提取转高清图片</div>
+                </a>
+                <a href="/qr/" class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-darkCard hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+                    <i class="fas fa-qrcode text-amber-500 mb-1.5 text-sm block"></i>
+                    <div class="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">二维码工具箱</div>
+                    <div class="text-[11px] text-zinc-400 mt-0.5">艺术美化与本地解码</div>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 全局轻量 Toast 提示容器 -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- 页脚 -->
+    <footer class="w-full bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 py-8 px-4 sm:px-6 transition-colors mt-12">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500 dark:text-zinc-400">
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-zinc-900 dark:text-zinc-100">超级工具箱 Pro</span>
+                <span>· 100% 浏览器本地运算，零数据上传</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-4">
+                <a href="/about.html" class="hover:underline">关于我们</a>
+                <a href="/privacy.html" class="hover:underline">隐私政策</a>
+                <a href="/terms.html" class="hover:underline">服务条款</a>
+                <a href="/contact.html" class="hover:underline">联系方式</a>
+                <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="hover:underline">粤ICP备2026017857号</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 交互逻辑初始化脚本 (ES Module) -->
+    <script type="module">
+        import { initCollage } from '/js/collage.js';
+        import { initTheme, toggleTheme } from '/js/utils.js';
+
+        window.toggleTheme = toggleTheme;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            initCollage();
+            console.log('[Collage Landing] Initialized successfully.');
+        });
+    </script>
+
+</body>
+</html>

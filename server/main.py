@@ -132,27 +132,11 @@ async def serve_admin_slash():
     admin_path = os.path.join(BASE_DIR, "admin", "index.html")
     return FileResponse(admin_path)
 
-# 5. 原生短链接 302 秒级直达重定向 (无第三方广告、无倒计时预览中转页)
+# 5. 短链接服务已安全下线 (避免主站域名被当作黑产跳板)
 @app.get("/s/{code}", include_in_schema=False)
-async def redirect_shortlink_endpoint(code: str):
-    db = await get_db_connection()
-    try:
-        cursor = await db.execute("SELECT id, original_url FROM short_links WHERE code = ?", (code,))
-        row = await cursor.fetchone()
-        if not row:
-            return RedirectResponse(url="/?err=shortlink_not_found", status_code=302)
-        await db.execute("UPDATE short_links SET click_count = click_count + 1, updated_at = datetime('now') WHERE id = ?", (row["id"],))
-        await db.commit()
-        return RedirectResponse(url=row["original_url"], status_code=302)
-    except Exception as e:
-        print(f"[ShortLink Redirect Error] {e}")
-        return RedirectResponse(url="/", status_code=302)
-    finally:
-        await db.close()
-
 @app.get("/api/s/{code}", include_in_schema=False)
-async def redirect_shortlink_api_endpoint(code: str):
-    return await redirect_shortlink_endpoint(code)
+async def redirect_shortlink_endpoint(code: str):
+    return RedirectResponse(url="/", status_code=301)
 
 
 

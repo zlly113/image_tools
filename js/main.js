@@ -6,7 +6,6 @@ import { initEnhancer } from './enhancer.js';
 import { initOcr } from './ocr.js';
 import { initPdfTools, switchPdfTab, switchOrganizeSubMode, switchConvertSubMode, switchSecuritySubMode } from './pdfTools.js';
 import { initQrCode, getQrCodeInstance, setQrCodeInstance, switchLinkToolTab, switchQRSubTab, regenerateQRCode } from './qrCode.js';
-import { initShortLink } from './shortLink.js';
 import { initAdManager } from './adManager.js';
 import { initI18n, setLocale, getLocale, getAvailableLocales, t } from './i18n.js';
 import { fetchSiteConfig, fetchLinks, trackLinkClick } from './configService.js';
@@ -34,10 +33,10 @@ export function switchGlobalTab(tabId) {
         }
         
         if (navBtn) {
-            navBtn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-slate-800 border-l-4 border-transparent";
+            navBtn.className = "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100/80 dark:hover:bg-zinc-800/60 transition-colors";
         }
         if (bottomBtn) {
-            bottomBtn.className = "flex flex-col items-center justify-center flex-1 py-1 text-gray-400 dark:text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors";
+            bottomBtn.className = "flex flex-col items-center justify-center flex-1 py-1.5 text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors";
         }
     });
 
@@ -74,11 +73,11 @@ export function switchGlobalTab(tabId) {
     }
     
     if (activeNavBtn) {
-        activeNavBtn.className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-indigo-600 bg-indigo-50/80 dark:text-indigo-400 dark:bg-slate-800/80 border-l-4 border-indigo-600 dark:border-indigo-400 font-semibold shadow-sm";
+        activeNavBtn.className = "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-zinc-900 dark:text-zinc-100 bg-zinc-200/70 dark:bg-zinc-800 transition-colors shadow-xs";
     }
 
     if (activeBottomBtn) {
-        activeBottomBtn.className = "flex flex-col items-center justify-center flex-1 py-1 text-indigo-600 dark:text-indigo-400 transition-colors font-semibold";
+        activeBottomBtn.className = "flex flex-col items-center justify-center flex-1 py-1.5 text-zinc-900 dark:text-zinc-100 font-semibold transition-colors";
     }
 }
 
@@ -98,7 +97,7 @@ export function switchTab(tabId) {
 
         if (section) section.classList.add('hidden');
         if (btn) {
-            btn.className = "px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/80 dark:hover:bg-slate-800 flex flex-col items-center group";
+            btn.className = "px-3.5 py-1.5 rounded-lg font-medium text-xs md:text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors flex items-center gap-1.5";
         }
     });
 
@@ -107,7 +106,7 @@ export function switchTab(tabId) {
 
     if (activeSection) activeSection.classList.remove('hidden');
     if (activeBtn) {
-        activeBtn.className = "px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 bg-indigo-600 text-white shadow-md shadow-indigo-500/20 flex flex-col items-center group";
+        activeBtn.className = "px-3.5 py-1.5 rounded-lg font-semibold text-xs md:text-sm bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-xs transition-colors flex items-center gap-1.5";
     }
 }
 
@@ -372,28 +371,9 @@ function safeInit(moduleName, initFn) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // 0. 短链直达跳转拦截 (处理 Nginx 降级至 index.html 的情况，实现毫秒级快速自动跳转)
-    const shortPathMatch = window.location.pathname.match(/^\/s\/([a-zA-Z0-9_-]+)/);
-    if (shortPathMatch && shortPathMatch[1]) {
-        const code = shortPathMatch[1];
-        document.body.innerHTML = `
-            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:system-ui,-apple-system,sans-serif;background:#0f172a;color:#f8fafc;">
-                <div style="width:36px;height:36px;border:3px solid rgba(99,102,241,0.2);border-top-color:#6366f1;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
-                <p style="margin-top:16px;font-size:14px;color:#cbd5e1;font-weight:500;">正在安全跳转至目标网址...</p>
-                <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
-            </div>
-        `;
-        try {
-            const resp = await fetch(`/api/v1/tools/shortlink/resolve/${encodeURIComponent(code)}`);
-            if (resp.ok) {
-                const data = await resp.json();
-                if (data && data.original_url) {
-                    window.location.replace(data.original_url);
-                    return;
-                }
-            }
-        } catch (e) {}
-        window.location.replace('/?err=shortlink_not_found');
+    // 0. 短链历史访问保护：若有人访问已下线的 /s/*，安全重定向回首页
+    if (window.location.pathname.startsWith('/s/')) {
+        window.location.replace('/');
         return;
     }
 
@@ -415,7 +395,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initUserAuthForms();
     tryRefresh(); // 页面打开时通过 HttpOnly Cookie 静默换票
 
-    // 5. 初始化各个深度子功能模块
+    // 5. 初始化各个深度子功能模块 (全站 100% 纯本地运行)
     safeInit('Background Remover', initBgRemover);
     safeInit('Collage Layout', initCollage);
     safeInit('Batch Converter', initConverter);
@@ -423,7 +403,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     safeInit('ONNX OCR', initOcr);
     safeInit('PDF Tools Studio', initPdfTools);
     safeInit('QR Code Styling', initQrCode);
-    safeInit('Short Link API', initShortLink);
     safeInit('Ad Banners Manager', initAdManager);
     
     // 6. 设置默认显示页签

@@ -119,6 +119,14 @@ server {
     # --------------------------------------------------------------------------
     # 2. 常规静态资源 (JS / 国际化语言包 / 图标)
     # --------------------------------------------------------------------------
+    location /libs/ {
+        alias $project_root/libs/;
+        expires 30d;
+        add_header Cache-Control "public, max-age=2592000, immutable";
+        add_header Cross-Origin-Opener-Policy "same-origin" always;
+        add_header Cross-Origin-Embedder-Policy "require-corp" always;
+    }
+
     location /js/ {
         alias $project_root/js/;
         expires 7d;
@@ -149,7 +157,14 @@ server {
         add_header Cache-Control "no-cache, no-store, must-revalidate";
     }
 
-    location ~ ^/(robots\.txt|sitemap\.xml|manifest\.json|opencv-esm-wrapper\.js)$ {
+    # 自定义 404 错误页
+    error_page 404 /404.html;
+    location = /404.html {
+        root $project_root;
+        internal;
+    }
+
+    location ~ ^/(robots\.txt|sitemap\.xml|manifest\.json|opencv-esm-wrapper\.js|llms\.txt)$ {
         root $project_root;
         expires 1d;
         add_header Cache-Control "public, max-age=86400";
@@ -186,22 +201,15 @@ server {
     }
 
     # --------------------------------------------------------------------------
-    # 6. 后端动态 API 与短链接原生 302 重定向反向代理
+    # 6. 短链接服务已安全下线：历史 /s/* 访问优雅重定向至首页 (避免被黑产当作跳板)
     # --------------------------------------------------------------------------
     location /s/ {
-        proxy_pass http://fastapi_backend;
-        proxy_http_version 1.1;
-        proxy_set_header Connection "";
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $remote_addr; # 仅传递真实客户端 IP，禁止客户端伪造首段
-        proxy_set_header X-Forwarded-Proto $scheme;
-
-        # 短链重定向严禁被中间代理强缓存
-        add_header Cache-Control "no-store, no-cache, must-revalidate";
-        add_header X-Content-Type-Options "nosniff" always;
-        add_header X-Frame-Options "SAMEORIGIN" always;
+        return 301 /;
     }
+
+    # --------------------------------------------------------------------------
+    # 7. 后端动态 API 反向代理
+    # --------------------------------------------------------------------------
 
     location /api/ {
         proxy_pass http://fastapi_backend;

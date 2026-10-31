@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <script>
+        if (location.protocol === 'http:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+            location.replace('https://' + location.host + location.pathname + location.search + location.hash);
+        }
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>隐私政策 (Privacy Policy) - 超级工具箱 Pro</title>
+    <meta name="description" content="超级工具箱 Pro 隐私政策。我们高度重视并竭力保护您的个人数据与文件隐私。文件100%纯前端本地处理零上传，符合 Google AdSense、GDPR 与 CCPA 合规要求。">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.hhdzai.top/privacy.html">
+    <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+    <!-- Tailwind CSS (本地) -->
+    <script src="/models/tailwindcss.js?v=1.1"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0f172a',
+                        darkCard: 'rgba(30, 41, 59, 0.7)',
+                        darkBorder: '#334155',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 dark:bg-darkBg text-gray-800 dark:text-gray-200 min-h-screen flex flex-col font-sans antialiased transition-colors duration-300">
+
+    <!-- 顶部导航栏 -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-white/85 dark:bg-slate-900/85 border-b border-gray-200/80 dark:border-slate-800/80">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3 group">
+                <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+                    <i class="fas fa-toolbox text-base"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-gray-900 dark:text-white text-base">超级工具箱 <span class="text-indigo-600 dark:text-indigo-400">Pro</span></span>
+                    <span class="text-[10px] text-gray-400 block -mt-1 tracking-wider">SUPER TOOLBOX</span>
+                </div>
+            </a>
+            
+            <nav class="flex items-center gap-2 sm:gap-4 text-xs font-medium">
+                <a href="/" class="px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors">
+                    <i class="fas fa-home mr-1"></i> 返回首页
+                </a>
+                <button id="langToggleBtn" onclick="toggleLanguage()" class="px-2.5 py-1.5 rounded-lg bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-200 transition-colors flex items-center gap-1">
+                    <i class="fas fa-globe text-indigo-500"></i>
+                    <span id="langBtnText">EN / 中文</span>
+                </button>
+                <button onclick="toggleTheme()" class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors" title="切换深浅主题">
+                    <i class="fas fa-moon dark:hidden"></i>
+                    <i class="fas fa-sun hidden dark:inline text-amber-400"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主体内容 -->
+    <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-10">
+        
+        <!-- 面包屑与快捷导航 -->
+        <div class="flex items-center justify-between border-b border-gray-200 dark:border-slate-800 pb-4 mb-8">
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+                <a href="/" class="hover:text-indigo-500">首页</a>
+                <span>/</span>
+                <span class="text-gray-700 dark:text-gray-300 font-medium">隐私政策</span>
+            </div>
+            <div class="flex items-center gap-3 text-xs">
+                <span class="text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                    <i class="fas fa-shield-halved"></i> AdSense / GDPR / CCPA 严格合规
+                </span>
+            </div>
+        </div>
+
+        <!-- 中文版内容 (默认显示) -->
+        <article id="content-zh" class="space-y-8">
+            <div class="text-center sm:text-left space-y-2">
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">隐私政策 (Privacy Policy)</h1>
+                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                    生效与最后更新日期：2026年10月27日 · 适用站点：<a href="https://www.hhdzai.top" class="text-indigo-600 dark:text-indigo-400 hover:underline">https://www.hhdzai.top</a>
+                </p>
+            </div>
+
+            <!-- 核心隐私高光强调 -->
+            <div class="p-4 sm:p-5 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/50 flex gap-4">
+                <div class="text-indigo-600 dark:text-indigo-400 text-2xl pt-1">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="text-xs sm:text-sm space-y-1">
+                    <h2 class="font-bold text-gray-900 dark:text-white">我们的核心隐私承诺：100% 浏览器本地处理，绝不上传文件</h2>
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                        超级工具箱 Pro 采用纯前端本地 WebAssembly (WASM)、HTML5 Canvas 与本地神经网络推理技术。当您使用 <strong>证件照抠图、多图排版、格式转换、画质增强、PDF 工具箱及离线 OCR 文字识别</strong> 时，所有文件直接在您的设备内存中运算，<strong>绝对不会上传至任何远程服务器</strong>。用完即焚，给您银行级别的隐私安全。
+                    </p>
+                </div>
+            </div>
+
+            <!-- 条款章节 -->
+            <section class="space-y-3 bg-white dark:bg-slate-800/80 p-6 rounded-2xl border border-gray-200/80 dark:border-slate-700/80 shadow-sm">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-ad text-indigo-500"></i> 一、Google AdSense 与第三方广告政策声明 (Mandatory AdSense Policy)
+                </h2>
+                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 space-y-2.5 leading-relaxed">
+                    <p>
+                        为了维持本站各项免费实用工具的长期持续运营与服务器带宽开销，我们在站点内引入了第三方广告展示合作商，包括 <strong>Google AdSense</strong> 及其他受信任的广告网络联盟。根据 Google 官方合作规范，我们特此向您明确披露：
+                    </p>
+                    <ul class="list-disc pl-5 space-y-1.5">
+                        <li><strong>第三方供应商（包括 Google）会使用 Cookie</strong>：根据用户先前访问本网站或互联网上其他网站的记录来投放广告。</li>
+                        <li><strong>Google 对广告 Cookie 的使用</strong>：使 Google 及其合作伙伴能够根据用户对本网站和/或互联网上其他网站的访问记录，向用户投放有针对性的展示广告。</li>
+                        <li><strong>用户选择退出个性化广告的权利</strong>：您可以随时访问 Google 广告设置页面 <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" class="text-indigo-600 dark:text-indigo-400 underline font-medium">Google Ads Settings</a> 停用个性化广告。</li>
+                        <li><strong>通过第三方通用退出平台管理 Cookie</strong>：您也可以访问 <a href="http://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 dark:text-indigo-400 underline font-medium">www.aboutads.info</a> 或 <a href="https://www.youronlinechoices.com/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 dark:text-indigo-400 underline font-medium">Your Online Choices</a>，集中选择停用参与其中的第三方广告联盟针对您的个性化 Cookie 追踪。</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="space-y-3 bg-white dark:bg-slate-800/80 p-6 rounded-2xl border border-gray-200/80 dark:border-slate-700/80 shadow-sm">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-cookie-bite text-amber-500"></i> 二、Cookie 与本地存储 (LocalStorage) 说明
+                </h2>
+                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 space-y-2.5 leading-relaxed">
+                    <p>
+                        Cookie 是存储在您计算机或移动设备上的极小型文本片段。除第三方广告所必需的 Cookie 之外，本站还使用浏览器的 <strong>LocalStorage</strong>（本地轻量键值存储）来提供优质的用户体验：
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        <div class="p-3 bg-gray-50 dark:bg-slate-900/60 rounded-xl border border-gray-100 dark:border-slate-800">
+                            <span class="font-semibold text-gray-800 dark:text-white block mb-1">功能偏好设置</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">记录您的外观主题模式（浅色/深色）以及多语言选择（中文/英文），避免每次刷新重新设置。</span>
+                        </div>
+                        <div class="p-3 bg-gray-50 dark:bg-slate-900/60 rounded-xl border border-gray-100 dark:border-slate-800">
+                            <span class="font-semibold text-gray-800 dark:text-white block mb-1">账户安全凭证</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">若您主动注册/登录账号，将保存经加密签名的身份认证 Token，用于验证会员点数与短链归属。</span>
+                        </div>
+                    </div>
+                    <p>您可以通过任何主流浏览器（Chrome、Edge、Safari、Firefox）的“隐私与安全设置”随时审查、屏蔽或清空这些 Cookie 及本地数据。</p>
+                </div>
+            </section>
+
+            <section class="space-y-3 bg-white dark:bg-slate-800/80 p-6 rounded-2xl border border-gray-200/80 dark:border-slate-700/80 shadow-sm">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-database text-blue-500"></i> 三、我们收集的信息及用途
+                </h2>
+                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 space-y-2.5 leading-relaxed">
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><strong>用户处理的文件内容（0收集）</strong>：再次郑重声明，您在图片工具、PDF 工具、离线 OCR 中加载的图片、文档、文字识别结果，绝不上传至任何服务器，我们无法获取、无法窥探、也无法备份您的任何文件。</li>
+                        <li><strong>常规访问日志与统计数据</strong>：为防范恶意网络攻击（如 DDoS、暴力破解）以及分析服务器性能瓶颈，服务器可能会自动记录极简日志（如访问时间、粗略地理国家/城市、浏览器类型、HTTP 响应码）。这些日志不与您的真实个人身份相关联。</li>
+                        <li><strong>注册用户提供的信息</strong>：若您选择注册账户，我们会妥善保存您的电子邮箱地址、加密加盐散列后的密码密文（无法被逆向破解）以及账户点数余额。</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="space-y-3 bg-white dark:bg-slate-800/80 p-6 rounded-2xl border border-gray-200/80 dark:border-slate-700/80 shadow-sm">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-globe-europe text-emerald-500"></i> 四、GDPR (欧盟通用数据保护条例) 权利
+                </h2>
+                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 space-y-2.5 leading-relaxed">
+                    <p>如果您位于欧洲经济区 (EEA) 或英国，根据《通用数据保护条例》(GDPR)，您享有以下法定数据权利：</p>
+                    <ul class="list-disc pl-5 space-y-1.5">
+                        <li><strong>知情权与访问权</strong>：有权获知我们处理了您的哪些个人数据并索取副本。</li>
+                        <li><strong>更正权</strong>：若发现个人资料有误，有权要求我们立即更新或修正。</li>
+                        <li><strong>被遗忘权 (删除权)</strong>：有权要求注销账户并彻底删除存储的关联信息。</li>
+                        <li><strong>撤销同意权</strong>：在基于同意处理数据的情况下，您有权随时撤回该同意。</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="space-y-3 bg-white dark:bg-slate-800/80 p-6 rounded-2xl border border-gray-200/80 dark:border-slate-700/80 shadow-sm">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-flag-usa text-purple-500"></i> 五、CCPA / CPRA (加州消费者隐私法案) 权利
+                </h2>
+                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 space-y-2.5 leading-relaxed">
+                    <p>对于美国加利福尼亚州居民，依据《加利福尼亚州消费者隐私法案》(CCPA/CPRA)：</p>
+                    <p class="font-semibold text-indigo-600 dark:text-indigo-400">
+                        我们在此庄严声明：我们绝不出售、出租或向任何第三方变相交易您的任何个人信息 (We do NOT sell your personal information)。
+                    </p>
+                    <p>您拥有知晓已收集个人信息类别、要求删除个人数据以及不受任何歧视性服务待遇的法定权利。</p>
+                </div>
+            </section>
+
+            <section class="space-y-3 bg-white dark:bg-slate-800/80 p-6 rounded-2xl border border-gray-200/80 dark:border-slate-700/80 shadow-sm">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-child text-pink-500"></i> 六、儿童在线隐私保护 (COPPA)
+                </h2>
+                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 space-y-2.5 leading-relaxed">
+                    <p>
+                        本站面向广大公众及专业办公用户，并不针对 13 周岁以下（或在适用的司法辖区为 16 周岁以下）的儿童。我们不会有意收集儿童的个人敏感信息。若监护人发现儿童在未经同意的情况下向本站提交了个人注册数据，请联系我们，我们将在核实后第一时间进行清除。
+                    </p>
+                </div>
+            </section>
+
+            <section class="space-y-3 bg-white dark:bg-slate-800/80 p-6 rounded-2xl border border-gray-200/80 dark:border-slate-700/80 shadow-sm">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-envelope-open-text text-indigo-500"></i> 七、联系我们与数据咨询
+                </h2>
+                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 space-y-2.5 leading-relaxed">
+                    <p>若您对本隐私政策有任何疑问、建议或需要行使您的法定隐私权利，请随时通过站长专用联络邮箱与我们取得联系：</p>
+                    <p class="p-3 bg-gray-50 dark:bg-slate-900 rounded-xl font-mono text-xs text-indigo-600 dark:text-indigo-400 inline-block border border-gray-200 dark:border-slate-700">
+                        <i class="fas fa-paper-plane mr-1.5"></i> 联络邮箱：oases1881@foxmail.com
+                    </p>
+                    <p>我们承诺通常在收到来信后的 24 至 48 小时内给予详尽答复。</p>
+                </div>
+            </section>
+        </article>
+
+        <!-- 英文版内容 (English Version) -->
+        <article id="content-en" class="space-y-8 hidden">
+            <div class="text-center sm:text-left space-y-2">
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">Privacy Policy</h1>
+                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                    Effective & Last Updated: October 27, 2026 · Website: <a href="https://www.hhdzai.top" class="text-indigo-600 dark:text-indigo-400 hover:underline">https://www.hhdzai.top</a>
+                </p>
+            </div>
+
+            <!-- Core Guarantee -->
+            <div class="p-4 sm:p-5 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/50 flex gap-4">
+                <div class="text-indigo-600 dark:text-indigo-400 text-2xl pt-1">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="text-xs sm:text-sm space-y-1">
+                    <h2 class="font-bold text-gray-900 dark:text-white">Our Core Commitment: 100% Client-Side Processing, Zero File Uploads</h2>
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                        Super Toolbox Pro is engineered with browser-native WebAssembly (WASM), Canvas pipelines, and offline neural inference. When you use features like <strong>ID Photo Maker, Batch Image Converter, Offline OCR, and PDF Tools</strong>, all processing occurs exclusively in your device's memory (RAM). <strong>Files are NEVER uploaded to any remote server</strong>, guaranteeing ultimate data confidentiality.
+                    </p>
+                </div>
+            </div>
+
+            <!-- AdSense Section -->
+            <section class="space-y-3 bg-white dark:bg-slate-800/80 p-6 rounded-2xl border border-gray-200/80 dark:border-slate-700/80 shadow-sm">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-ad text-indigo-500"></i> 1. Google AdSense & Third-Party Advertising Policy
+                </h2>
+                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 space-y-2.5 leading-relaxed">
+                    <p>
+                        To keep all our tools completely free and cover bandwidth and operational infrastructure costs, we display advertisements provided by trusted advertising partners, including <strong>Google AdSense</strong>. Under Google's publisher policies, we provide the following required disclosures:
+                    </p>
+                    <ul class="list-disc pl-5 space-y-1.5">
+                        <li><strong>Third-party vendors, including Google, use cookies</strong> to serve ads based on a user's prior visits to this website or other websites on the Internet.</li>
+                        <li><strong>Google's use of advertising cookies</strong> enables it and its partners to serve ads to users based on their visits to our site and/or other sites across the Web.</li>
+                        <li><strong>Opt-out options for personalized advertising</strong>: Users may opt out of personalized advertising at any time by visiting <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" class="text-indigo-600 dark:text-indigo-400 underline font-medium">Google Ads Settings</a>.</li>
+                        <li><strong>Industry-wide opt-out platforms</strong>: Alternatively, you can opt out of a third-party vendor's use of cookies for personalized advertising by visiting <a href="http://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 dark:text-indigo-400 underline font-medium">www.aboutads.info</a> or <a href="https://www.youronlinechoices.com/" target="_blank" rel="noopener noreferrer" class="text-indigo-600 dark:text-indigo-400 underline font-medium">Your Online Choices</a>.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Cookies Section -->
+            <section class="space-y-3 bg-white dark:bg-slate-800/80 p-6 rounded-2xl border border-gray-200/80 dark:border-slate-700/80 shadow-sm">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-cookie-bite text-amber-500"></i> 2. Cookies & Local Storage Technologies
+                </h2>
+                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 space-y-2.5 leading-relaxed">
+                    <p>
+                        Cookies are small files stored on your computer or device. We utilize browser <strong>LocalStorage</strong> and essential cookies exclusively for application functionality:
+                    </p>
+                    <ul class="list-disc pl-5 space-y-1.5">
+                        <li><strong>User Preferences</strong>: Storing UI theme selection (Light/Dark mode) and language settings (English/Chinese).</li>
+                        <li><strong>Authentication Session</strong>: For users who register an account, an encrypted authentication token (JWT) is stored to maintain signed-in status and manage tool credits.</li>
+                    </ul>
+                    <p>You can manage, restrict, or clear cookies and local data through your browser settings at any time.</p>
+                </div>
+            </section>
+
+            <!-- Data Collection -->
+            <section class="space-y-3 bg-white dark:bg-slate-800/80 p-6 rounded-2xl border border-gray-200/80 dark:border-slate-700/80 shadow-sm">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-database text-blue-500"></i> 3. Information We Collect
+                </h2>
+                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 space-y-2.5 leading-relaxed">
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><strong>User File Content (Zero Collection)</strong>: We do NOT collect, inspect, store, or transmit any images, PDF files, or recognized text. Everything is computed solely within your client browser.</li>
+                        <li><strong>Technical Access Logs</strong>: For security monitoring (defending against DDoS and unauthorized bot scraping), our web server records basic technical metrics (timestamps, browser user-agent, IP address). These logs cannot identify you personally and are routinely cycled.</li>
+                        <li><strong>Account Details</strong>: If you create an account, we record your email address and an irreversibly hashed password.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- GDPR & CCPA -->
+            <section class="space-y-3 bg-white dark:bg-slate-800/80 p-6 rounded-2xl border border-gray-200/80 dark:border-slate-700/80 shadow-sm">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-globe text-emerald-500"></i> 4. GDPR & CCPA Privacy Rights
+                </h2>
+                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 space-y-2.5 leading-relaxed">
+                    <p><strong>European Union (GDPR)</strong>: Residents of the EEA/UK are entitled to access, rectify, delete, or restrict the processing of their personal data, or export their data at any time.</p>
+                    <p><strong>California (CCPA/CPRA)</strong>: We strictly state: <strong>We do NOT sell or share your personal information</strong> with any third party for commercial monetization.</p>
+                </div>
+            </section>
+
+            <!-- Contact -->
+            <section class="space-y-3 bg-white dark:bg-slate-800/80 p-6 rounded-2xl border border-gray-200/80 dark:border-slate-700/80 shadow-sm">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-envelope-open-text text-indigo-500"></i> 5. Contact Information
+                </h2>
+                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 space-y-2.5 leading-relaxed">
+                    <p>For any questions regarding this Privacy Policy or to exercise your privacy rights, please contact our Data Protection Team at:</p>
+                    <p class="p-3 bg-gray-50 dark:bg-slate-900 rounded-xl font-mono text-xs text-indigo-600 dark:text-indigo-400 inline-block border border-gray-200 dark:border-slate-700">
+                        <i class="fas fa-paper-plane mr-1.5"></i> oases1881@foxmail.com
+                    </p>
+                </div>
+            </section>
+        </article>
+
+    </main>
+
+    <!-- 页脚备案与合规 -->
+    <footer class="text-center text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300 border-t border-gray-200/60 dark:border-slate-800/80 pt-8 pb-12 shrink-0">
+        <nav class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mb-3.5 font-medium text-gray-600 dark:text-gray-400">
+            <a href="/" class="hover:text-indigo-600 dark:hover:text-indigo-400">首页</a>
+            <span class="text-gray-300 dark:text-slate-700">|</span>
+            <a href="/privacy.html" class="text-indigo-600 dark:text-indigo-400 font-bold">隐私政策</a>
+            <span class="text-gray-300 dark:text-slate-700">|</span>
+            <a href="/terms.html" class="hover:text-indigo-600 dark:hover:text-indigo-400">服务条款</a>
+            <span class="text-gray-300 dark:text-slate-700">|</span>
+            <a href="/about.html" class="hover:text-indigo-600 dark:hover:text-indigo-400">关于我们</a>
+            <span class="text-gray-300 dark:text-slate-700">|</span>
+            <a href="/contact.html" class="hover:text-indigo-600 dark:hover:text-indigo-400">联系我们</a>
+        </nav>
+        <p class="mb-2 text-gray-400 dark:text-gray-500 text-[11px] sm:text-xs">
+            © 2026 超级工具箱 Pro. All rights reserved. · 100% 浏览器本地离线运行 · 零云端隐私上传
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-6 mt-1.5 text-[11px]">
+            <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="hover:text-indigo-500 dark:hover:text-indigo-400">
+                闽ICP备2026017857号
+            </a>
+            <a href="https://beian.mps.gov.cn/#/query/webSearch?code=35080202351547" target="_blank" rel="noopener noreferrer" class="hover:text-indigo-500 dark:hover:text-indigo-400">
+                闽公网安备35080202351547号
+            </a>
+        </div>
+    </footer>
+
+    <!-- 主题与双语切换脚本 -->
+    <script>
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+
+        let currentLang = localStorage.getItem('user_locale') === 'en-US' ? 'en' : 'zh';
+        function updateLangDisplay() {
+            const zhEl = document.getElementById('content-zh');
+            const enEl = document.getElementById('content-en');
+            const btnText = document.getElementById('langBtnText');
+            if (currentLang === 'en') {
+                zhEl.classList.add('hidden');
+                enEl.classList.remove('hidden');
+                btnText.textContent = '中文';
+                document.documentElement.lang = 'en';
+            } else {
+                zhEl.classList.remove('hidden');
+                enEl.classList.add('hidden');
+                btnText.textContent = 'English';
+                document.documentElement.lang = 'zh-CN';
+            }
+        }
+        function toggleLanguage() {
+            currentLang = (currentLang === 'zh') ? 'en' : 'zh';
+            localStorage.setItem('user_locale', currentLang === 'en' ? 'en-US' : 'zh-CN');
+            updateLangDisplay();
+        }
+        // 初始化语言显示
+        updateLangDisplay();
+    </script>
+</body>
+</html>

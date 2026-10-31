@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <script>
+        // 自动强制 HTTPS 跳转 (保障 WebAssembly 多线程与 SharedArrayBuffer 安全上下文)
+        if (location.protocol === 'http:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+            location.replace('https://' + location.host + location.pathname + location.search + location.hash);
+        }
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片转文字 - 免费在线离线 OCR 识别与 PDF 文本提取 (100% 本地不上传)</title>
+    <meta name="description" content="基于百度飞桨 PaddleOCR (PP-OCRv6) 与 WebAssembly 驱动的免费在线图片转文字与 PDF 提取工具。高精度识别中英文、繁体、标点符号，支持长篇 PDF 多页批量解析，一键导出 TXT、Word (.docx) 与 Excel (.xlsx)。100% 浏览器本地运算，文件绝不上传服务器，彻底保护商业机密与个人隐私。">
+    <meta name="keywords" content="图片转文字, OCR文字识别 免费, 截图文字提取, 扫描件识别, PDF提取文字, 离线OCR, PaddleOCR 在线, 图片提取文字 不上传, 纯前端OCR">
+    <meta name="author" content="超级工具箱 Pro">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+    <!-- Canonical (SEO) -->
+    <link rel="canonical" href="https://www.hhdzai.top/ocr/">
+
+    <!-- PWA & Mobile Web App Meta -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+    <link rel="apple-touch-icon" href="/icons/icon.svg">
+    <meta name="theme-color" content="#4f46e5" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+
+    <!-- Open Graph Tags (Social SEO) -->
+    <meta property="og:site_name" content="超级工具箱 Pro">
+    <meta property="og:title" content="图片转文字 - 免费离线 OCR 识别与 PDF 文本提取 (100% 纯本地运行不上传)">
+    <meta property="og:description" content="基于 PaddleOCR 深度学习模型的离线图片转文字工具。支持中英文识别、多页 PDF 批量解析，导出 TXT/Word/Excel，文件绝不上传服务器。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.hhdzai.top/ocr/">
+    <meta property="og:image" content="https://www.hhdzai.top/icons/icon.svg">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="图片转文字 - 免费离线 OCR 识别工具">
+    <meta name="twitter:description" content="免费离线图片转文字。PaddleOCR 驱动，支持 PDF 提取与 Word/Excel 导出，100% 本地运算不上传。">
+    <meta name="twitter:image" content="https://www.hhdzai.top/icons/icon.svg">
+
+    <!-- Schema.org 结构化数据 (GEO & 搜索引擎增强) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "@id": "https://www.hhdzai.top/ocr/#webapp",
+          "name": "在线图片转文字与离线 OCR 工具",
+          "url": "https://www.hhdzai.top/ocr/",
+          "description": "基于百度飞桨 PaddleOCR (PP-OCRv6) 深度学习轻量化模型与 WebAssembly 引擎的免费离线 OCR 文字识别工具，支持图片截图识别、多页 PDF 批量文本提取，并一键导出为 Word、Excel 与 TXT，文件 100% 在本地处理不上传。",
+          "applicationCategory": "UtilitiesApplication",
+          "operatingSystem": "All modern browsers (Windows, macOS, Linux, Android, iOS)",
+          "browserRequirements": "Requires WebAssembly, Web Workers and modern Canvas support",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "CNY"
+          },
+          "featureList": [
+            "PaddleOCR (PP-OCRv6) 深度学习中英文与繁体高精度离线检测与识别",
+            "支持单张图片截图与长篇多页 PDF 逐页/批量提取",
+            "一键复制识别结果与导出 TXT、Word (.docx)、Excel (.xlsx) 表格",
+            "WebAssembly 多线程与独立 Web Worker 加速，界面流畅不卡死",
+            "100% 浏览器客户端本地推理，敏感商业合同与私密发票绝不上传云端"
+          ]
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://www.hhdzai.top/ocr/#breadcrumb",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "超级工具箱",
+              "item": "https://www.hhdzai.top/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "图片转文字 OCR",
+              "item": "https://www.hhdzai.top/ocr/"
+            }
+          ]
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://www.hhdzai.top/ocr/#howto",
+          "name": "如何免费在线将图片或 PDF 转为文字并导出 Word/Excel",
+          "description": "仅需 4 步即可在浏览器本地完成图片与 PDF 的文字识别并无损导出。",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "position": 1,
+              "name": "导入图片或 PDF 文件",
+              "text": "点击虚线导入区域或将图片（JPG/PNG/WebP）或 PDF 文件拖入浏览器，文件仅在本地内存中读取。"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 2,
+              "name": "启动 OCR 神经网络推理",
+              "text": "点击‘开始识别当前页’（若为多页 PDF 可点击‘一键批量识别所有页面’），本地 WebAssembly 引擎将自动检测文本位置并进行字符推理。"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 3,
+              "name": "查看框选预览与识别文字",
+              "text": "可在‘可视化预览’中直观查看文字检测框选区域，或切换至‘提取的文本’标签页对识别结果进行即时校对与编辑。"
+            },
+            {
+              "@type": "HowToStep",
+              "position": 4,
+              "name": "一键复制或导出文档",
+              "text": "点击右上角按钮一键‘复制文本’，或直接导出为标准纯文本 (.txt)、Word (.docx) 排版文档或 Excel (.xlsx) 表格数据。"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://www.hhdzai.top/ocr/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "我上传识别的商业合同、财务发票或身份证会泄露吗？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "绝对不会。超级工具箱 Pro 的 OCR 引擎是通过 WebAssembly (ONNX Runtime Web) 技术直接在您的本地电脑或手机内存中加载神经网络模型并执行前向推理的。整个识别过程不需要任何服务端 API 参与，您可以按 F12 打开浏览器 Network 面板或直接断开网络测试，没有任何数据被上传至云端服务器，极致保障商业机密与身份隐私。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "离线 OCR 相比常见的大厂在线云端 OCR 有什么优势？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "主要有三大核心优势：① 绝对的隐私安全：企业财务报表、机密合同、私人证件等严禁外传的数据可放心处理；② 零成本无限制：无需购买 API 识别次数包或开通会员，无每日调用额度限制；③ 离线可用：在内网涉密网络、无外网信号的飞机或高铁环境中，只要打开网页即可随时工作。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "这个工具支持识别哪些语言与文档类型？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "本工具内置经过蒸馏优化的百度飞桨 PaddleOCR (PP-OCRv6) 中英文大模型，支持简体中文、繁体中文、英文、数字以及常用标点符号的高精度识别；输入支持各类常见图片（JPG/JPEG、PNG、WebP、BMP）以及电子版或扫描版多页长篇 PDF 文档。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "识别结果可以导出成哪些格式？能直接导出 Word 和 Excel 吗？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "支持一键复制到剪贴板，以及直接导出为三类常用办公文件：① 纯文本 (.txt) 文件；② 微软 Word (.docx) 文档，自动保留基础段落分块结构；③ 微软 Excel (.xlsx) 电子表格，适合快速提取财务单据或数据表格中的行数据。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "首次打开页面时为什么会提示‘正在下载识别模型’？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "因为这是一个真正的离线神经网络模型（包含检测模型 det.tar 与识别模型 rec.tar，合计约 15MB）。首次访问时浏览器需要将模型参数缓存到本地 IndexedDB/Cache 中，后续再次访问时将直接命中本地极速缓存，实现毫秒级启动，不再耗费网络流量。"
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <!-- Tailwind CSS (Local Engine) -->
+    <script src="/models/tailwindcss.js?v=1.1"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#09090b',
+                        darkCard: '#18181b',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+
+    <!-- PDF.js library for PDF rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous"></script>
+    <!-- pdf-lib for client-side PDF document manipulation -->
+    <script src="/models/pdf-lib.min.js"></script>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "js-yaml": "/models/js-yaml.js?v=1.1",
+          "clipper-lib": "/models/clipper.js?v=1.1",
+          "onnxruntime-web": "/models/ort.js?v=1.1",
+          "@techstark/opencv-js": "/opencv-esm-wrapper.js?v=3.0"
+        }
+      }
+    </script>
+
+    <!-- 本地托管的导出办公库 -->
+    <script src="/libs/docx.umd.js"></script>
+    <script src="/libs/xlsx.full.min.js"></script>
+
+    <style>
+        .checkerboard {
+            background-image:
+                linear-gradient(45deg, rgba(128,128,128,0.12) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(128,128,128,0.12) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(128,128,128,0.12) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(128,128,128,0.12) 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-zinc-50 text-zinc-800 dark:bg-darkBg dark:text-zinc-200 min-h-screen font-sans flex flex-col transition-colors duration-200">
+
+    <!-- 顶部全局导航栏 -->
+    <header class="w-full bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-40 transition-colors">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="/" class="flex items-center gap-2.5 group" title="返回超级工具箱首页">
+                    <div class="w-8 h-8 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-sm shadow-xs group-hover:scale-105 transition-transform">
+                        <i class="fas fa-toolbox"></i>
+                    </div>
+                    <span class="font-bold text-base tracking-tight text-zinc-900 dark:text-zinc-100">超级工具箱 <span class="text-xs font-semibold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">Pro</span></span>
+                </a>
+                <span class="text-zinc-300 dark:text-zinc-700 hidden sm:inline">/</span>
+                <span class="text-xs font-semibold text-zinc-600 dark:text-zinc-300 hidden sm:inline flex items-center gap-1.5">
+                    <i class="fas fa-file-lines text-indigo-500"></i> 图片转文字 OCR
+                </span>
+            </div>
+
+            <!-- 快捷跨工具导航 -->
+            <nav class="hidden md:flex items-center gap-4 text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                <a href="/bg-remover/" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">证件照换底色</a>
+                <a href="/pdf-tools/" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">PDF 工具箱</a>
+                <a href="/qr/" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">二维码工具</a>
+                <a href="/image-converter/" class="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">批量压缩转换</a>
+            </nav>
+
+            <!-- 右侧操作区：主题切换与主站直达 -->
+            <div class="flex items-center gap-2.5">
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-xl text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" title="切换暗黑/明亮模式">
+                    <i class="fas fa-moon dark:hidden text-sm"></i>
+                    <i class="fas fa-sun hidden dark:inline text-sm text-amber-400"></i>
+                </button>
+                <a href="/" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 text-xs font-semibold rounded-xl transition-colors shadow-xs">
+                    <i class="fas fa-house text-[11px]"></i> 全部工具
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主体容器 -->
+    <main class="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-8 flex-grow space-y-8">
+
+        <!-- 页面 Hero 标头与 AI 搜索一句话摘要 -->
+        <section class="space-y-3">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+                    <i class="fas fa-brain text-[11px]"></i> 百度飞桨 PaddleOCR PP-OCRv6 引擎
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                    <i class="fas fa-shield-halved text-[11px]"></i> 100% 浏览器 WebAssembly 本地推理
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                    <i class="fas fa-file-export text-[11px]"></i> 导出 Word / Excel / TXT
+                </span>
+            </div>
+
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight">
+                图片转文字 - 免费离线 OCR 识别与 PDF 文本提取
+            </h1>
+
+            <!-- GEO: AI 引擎与用户核心摘要卡片 -->
+            <div class="p-4 bg-zinc-100/80 dark:bg-zinc-800/60 rounded-xl border border-zinc-200/80 dark:border-zinc-700/60 text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                <p>
+                    <strong class="text-zinc-900 dark:text-zinc-100 font-semibold">快速解答：</strong>
+                    本工具在浏览器本地运行，采用百度飞桨轻量化深度学习模型 PaddleOCR (PP-OCRv6)，支持高精度提取图片、屏幕截图及长篇多页 PDF 中的中英文字。<strong>所有图像处理与神经网络推理 100% 在您的本地设备内存中完成，文件绝不上传云端服务器</strong>，彻底杜绝商业合同与私密发票泄露风险，并支持一键导出为 Word (.docx)、Excel (.xlsx) 或纯文本 (.txt)。
+                </p>
+            </div>
+        </section>
+
+        <!-- 核心工作台 (Workbench) -->
+        <section class="bg-white dark:bg-zinc-900/90 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xs p-5 md:p-6 transition-colors">
+            <!-- 引擎状态条 -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-5 border-b border-zinc-200 dark:border-zinc-800">
+                <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-sm shadow-xs">
+                        <i class="fas fa-file-lines text-base"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">本地离线 OCR 文字识别工作台</h2>
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">多线程 WebAssembly 驱动 · 支持单张图片与长篇多页 PDF 批量解析</p>
+                    </div>
+                </div>
+
+                <!-- 引擎状态卡片 -->
+                <div id="ocrEngineStatusCard" class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700/80 shrink-0">
+                    <div id="ocrEngineIndicator" class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse shrink-0"></div>
+                    <div>
+                        <span class="text-xs font-semibold text-zinc-800 dark:text-zinc-200 block" id="ocrEngineStatusTitle">正在加载 OCR 离线引擎...</span>
+                        <span class="text-[10px] text-zinc-400 block font-mono" id="ocrEngineStatusDesc">首次运行自动缓存模型权重（约 15MB 离线流量），请稍候。</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 主交互工作区 (双列网格) -->
+            <div id="section-ocr" class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+                <!-- 左列：导入与控制面板 (lg:col-span-4) -->
+                <div class="lg:col-span-4 space-y-4">
+                    <!-- 文件上传卡片 -->
+                    <div class="p-4 bg-zinc-50 dark:bg-zinc-800/40 rounded-xl border border-zinc-200/80 dark:border-zinc-700/60 space-y-3">
+                        <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider block">1. 导入图片或 PDF 文件</label>
+                        <div id="ocrDropZone" class="w-full border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl p-5 text-center cursor-pointer hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-white dark:hover:bg-zinc-800/60 transition-colors relative">
+                            <div class="w-10 h-10 mx-auto rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 flex items-center justify-center mb-2 shadow-xs">
+                                <i class="fas fa-file-invoice text-base"></i>
+                            </div>
+                            <p class="text-xs text-zinc-800 dark:text-zinc-200 font-medium mb-0.5">点击选择文件或拖拽至此</p>
+                            <p class="text-[11px] text-zinc-400">支持 PNG, JPG, WEBP, PDF 格式</p>
+                            <input type="file" id="ocrInput" accept="image/*,.pdf" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full"/>
+                        </div>
+                        <div class="flex items-center justify-between text-xs font-mono text-zinc-500 pt-1">
+                            <span class="truncate max-w-[200px]" id="ocrFileStatus">未选择任何文件</span>
+                            <span class="text-[10px] text-zinc-400 flex items-center gap-1"><i class="fas fa-lock text-[10px] text-emerald-500"></i> 本地安全加载</span>
+                        </div>
+                    </div>
+
+                    <!-- PDF 多页控制卡片 (默认隐藏，载入 PDF 后展示) -->
+                    <div id="ocrPdfControls" class="p-4 bg-zinc-50 dark:bg-zinc-800/40 rounded-xl border border-zinc-200/80 dark:border-zinc-700/60 hidden space-y-3">
+                        <label class="text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider block">PDF 多页控制</label>
+                        <div class="flex items-center justify-between gap-2">
+                            <button id="ocrPdfPrevBtn" class="px-3 py-1.5 bg-white dark:bg-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-600 border border-zinc-200 dark:border-zinc-600 text-zinc-700 dark:text-zinc-200 rounded-lg text-xs font-medium transition-colors">
+                                上一页
+                            </button>
+                            <span id="ocrPdfPageNum" class="text-xs font-mono text-zinc-700 dark:text-zinc-200 font-semibold">第 1 / 1 页</span>
+                            <button id="ocrPdfNextBtn" class="px-3 py-1.5 bg-white dark:bg-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-600 border border-zinc-200 dark:border-zinc-600 text-zinc-700 dark:text-zinc-200 rounded-lg text-xs font-medium transition-colors">
+                                下一页
+                            </button>
+                        </div>
+                        <button id="ocrPdfAllBtn" class="w-full py-2 bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 hover:opacity-90 text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-xs">
+                            <i class="fas fa-layer-group text-xs"></i> 一键批量识别所有页面
+                        </button>
+                    </div>
+
+                    <!-- 开始识别触发卡片 -->
+                    <div class="p-4 bg-zinc-50 dark:bg-zinc-800/40 rounded-xl border border-zinc-200/80 dark:border-zinc-700/60 space-y-3">
+                        <button id="ocrStartBtn" disabled class="w-full bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 font-semibold py-2.5 px-4 rounded-xl shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-xs flex items-center justify-center gap-2">
+                            <i class="fas fa-play text-xs"></i>
+                            <span>开始识别当前页</span>
+                        </button>
+                    </div>
+
+                    <!-- 特性说明提示卡片 -->
+                    <div class="p-4 bg-zinc-50/60 dark:bg-zinc-800/20 rounded-xl border border-zinc-200/60 dark:border-zinc-800 text-xs text-zinc-600 dark:text-zinc-400 space-y-2">
+                        <div class="flex items-center gap-1.5 font-semibold text-zinc-900 dark:text-zinc-200">
+                            <i class="fas fa-circle-info text-xs text-zinc-500"></i>
+                            <span>技术说明与使用提示</span>
+                        </div>
+                        <ul class="list-disc pl-4 space-y-1 text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed marker:text-zinc-400">
+                            <li><strong class="text-zinc-700 dark:text-zinc-300">纯本地推理</strong>：完全在浏览器内存中运行，零上传，彻底保护商业机密与个人隐私。</li>
+                            <li><strong class="text-zinc-700 dark:text-zinc-300">移动端优化</strong>：支持手机与平板访问，超大原图建议先裁剪以降低内存占用。</li>
+                            <li><strong class="text-zinc-700 dark:text-zinc-300">智能排版导出</strong>：自动合并段落，可一键直出 TXT、Word 与 Excel。</li>
+                            <li><strong class="text-zinc-700 dark:text-zinc-300">运算性能</strong>：识别速度取决于您设备的 CPU 算力与 WebAssembly 多线程执行能力。</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 右列：画布预览舞台与文字编辑器 (lg:col-span-8) -->
+                <div class="lg:col-span-8 bg-zinc-50 dark:bg-zinc-900/60 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-xs flex flex-col overflow-hidden min-h-[580px]">
+                    <!-- 分段控制器与导出操作条 -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+                        <nav class="flex space-x-4" id="ocrTabNav">
+                            <button id="ocrTabBtnPreview" class="border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100 border-b-2 py-1 px-1 text-xs md:text-sm font-semibold focus:outline-none transition-colors">
+                                可视化框选预览
+                            </button>
+                            <button id="ocrTabBtnText" class="border-transparent text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 border-b-2 py-1 px-1 text-xs md:text-sm font-medium focus:outline-none transition-colors">
+                                提取的文本结果
+                            </button>
+                        </nav>
+
+                        <!-- 导出操作栏 -->
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <button id="ocrCopyBtn" disabled class="px-2.5 py-1.5 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-200 rounded-lg text-xs font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1">
+                                <i class="far fa-copy text-xs"></i> 复制文本
+                            </button>
+                            <button id="ocrExportTxtBtn" disabled class="px-2.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 rounded-lg text-xs font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1">
+                                <i class="far fa-file-alt text-xs"></i> 导出 TXT
+                            </button>
+                            <button id="ocrExportWordBtn" disabled class="px-2.5 py-1.5 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 rounded-lg text-xs font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1">
+                                <i class="far fa-file-word text-xs text-blue-500"></i> Word
+                            </button>
+                            <button id="ocrExportExcelBtn" disabled class="px-2.5 py-1.5 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 rounded-lg text-xs font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1">
+                                <i class="far fa-file-excel text-xs text-emerald-500"></i> Excel
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 页签 1：画布可视化舞台 -->
+                    <div id="ocrTabContentPreview" class="flex-1 flex flex-col min-h-[500px]">
+                        <div class="flex-1 relative flex items-center justify-center p-6 bg-zinc-100/60 dark:bg-zinc-950/60 checkerboard overflow-auto no-scrollbar">
+                            <div class="relative" id="ocrCanvasContainer">
+                                <canvas id="ocrPreviewCanvas" class="shadow-md rounded-lg max-w-full max-h-[640px] object-contain hidden"></canvas>
+                                <div id="ocrOverlayLayer" class="absolute inset-0 pointer-events-auto overflow-hidden"></div>
+                            </div>
+                            <div id="ocrPlaceholder" class="text-zinc-400 flex flex-col items-center justify-center h-full w-full absolute inset-0 pointer-events-none">
+                                <div class="w-12 h-12 rounded-xl bg-zinc-200/50 dark:bg-zinc-800/50 flex items-center justify-center mb-2.5 text-zinc-400">
+                                    <i class="fas fa-file-alt text-lg"></i>
+                                </div>
+                                <span class="text-xs font-medium">请在左侧上传图片或 PDF 文档进行识别</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 页签 2：文本编辑器 -->
+                    <div id="ocrTabContentText" class="flex-1 hidden flex-col p-4 bg-zinc-50/50 dark:bg-zinc-950/40">
+                        <textarea id="ocrResultTextarea" readonly class="w-full flex-1 min-h-[460px] p-4 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 rounded-lg font-mono text-xs leading-relaxed text-zinc-800 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 resize-none shadow-xs" placeholder="识别出的文字将在这里显示，您可以直接复制或导出..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 详细使用教程 (HowTo 结构化文本) -->
+        <section class="bg-white dark:bg-zinc-900/90 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xs p-6 md:p-8 space-y-6">
+            <div>
+                <h2 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 flex items-center gap-2">
+                    <i class="fas fa-list-ol text-blue-500 text-base"></i>
+                    如何使用离线 OCR 从图片与 PDF 中提取文字？
+                </h2>
+                <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                    全程在您的电脑或手机浏览器本地运行，无需登录注册，操作简捷直观：
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30">
+                    <div class="w-7 h-7 rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-xs mb-3">1</div>
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1">导入文件</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        支持将截图、拍摄照片（JPG/PNG/WebP）或扫描版 PDF 拖入网页，即刻在本地完成解析。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30">
+                    <div class="w-7 h-7 rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-xs mb-3">2</div>
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1">本地模型推理</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        点击“开始识别”，PaddleOCR 在本地 WebAssembly 内存中进行文本行检测与字符识别，极速高效。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30">
+                    <div class="w-7 h-7 rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-xs mb-3">3</div>
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1">直观框选对照</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        右侧舞台实时高亮框出检测到的文字区域，点击即可定位文本，方便校对与核验复杂排版。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30">
+                    <div class="w-7 h-7 rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 flex items-center justify-center font-bold text-xs mb-3">4</div>
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1">一键导出办公文档</h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        一键复制全文，或直接下载保存为纯文本 (.txt)、Word (.docx) 段落文档与 Excel (.xlsx) 数据表格。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 知识库：纯前端离线 OCR 与传统云端 OCR 对比 -->
+        <section class="bg-white dark:bg-zinc-900/90 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xs p-6 md:p-8 space-y-6">
+            <div>
+                <h2 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 flex items-center gap-2">
+                    <i class="fas fa-scale-balanced text-emerald-500 text-base"></i>
+                    纯前端离线 OCR 与传统云端 OCR 核心差异对比
+                </h2>
+                <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                    为什么越来越多的法律、财务、政务与企业研发人员选择在本地运行 OCR 工具？
+                </p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs sm:text-sm border-collapse">
+                    <thead>
+                        <tr class="border-b border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400">
+                            <th class="py-3 px-4 font-semibold">对比维度</th>
+                            <th class="py-3 px-4 font-semibold text-emerald-600 dark:text-emerald-400">本站离线 OCR (超级工具箱)</th>
+                            <th class="py-3 px-4 font-semibold">传统云端 OCR (第三方在线服务)</th>
+                            <th class="py-3 px-4 font-semibold">对使用者的实际价值</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800 text-zinc-700 dark:text-zinc-300">
+                        <tr>
+                            <td class="py-3.5 px-4 font-medium">数据隐私安全</td>
+                            <td class="py-3.5 px-4 font-semibold text-emerald-600 dark:text-emerald-400">100% 浏览器本地运算，零数据外传</td>
+                            <td class="py-3.5 px-4 text-rose-500">文件必须完整上传至第三方云端服务器</td>
+                            <td class="py-3.5 px-4 text-xs text-zinc-500 dark:text-zinc-400">合同、身份证件、财务报表绝无外泄风险</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3.5 px-4 font-medium">费用与调用额度</td>
+                            <td class="py-3.5 px-4 font-semibold text-emerald-600 dark:text-emerald-400">完全免费，无限次使用，无充值门槛</td>
+                            <td class="py-3.5 px-4 text-zinc-500">按次计费或按月订阅会员，免费额度极少</td>
+                            <td class="py-3.5 px-4 text-xs text-zinc-500 dark:text-zinc-400">无需注册账号，没有充值陷阱，自由批量处理</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3.5 px-4 font-medium">离线网络依赖</td>
+                            <td class="py-3.5 px-4 font-semibold text-emerald-600 dark:text-emerald-400">PWA 缓存就绪后，断网/弱网均可流畅使用</td>
+                            <td class="py-3.5 px-4 text-zinc-500">断网完全不可用，弱网环境上传大图容易超时</td>
+                            <td class="py-3.5 px-4 text-xs text-zinc-500 dark:text-zinc-400">机房隔离内网、差旅飞机、高铁断网环境可用</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3.5 px-4 font-medium">文件格式支持</td>
+                            <td class="py-3.5 px-4 font-semibold text-emerald-600 dark:text-emerald-400">主流图片 + 长篇多页 PDF 批量解析</td>
+                            <td class="py-3.5 px-4 text-zinc-500">多数服务仅支持单张图片，PDF 通常需额外付费</td>
+                            <td class="py-3.5 px-4 text-xs text-zinc-500 dark:text-zinc-400">直接把长篇论文、标书与扫描合同一键提取</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 知识库：提升文字识别准确率的 4 大技巧 -->
+        <section class="bg-white dark:bg-zinc-900/90 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xs p-6 md:p-8 space-y-6">
+            <div>
+                <h2 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 flex items-center gap-2">
+                    <i class="fas fa-wand-magic-sparkles text-amber-500 text-base"></i>
+                    如何让图片文字识别准确率提升至 99% 以上？
+                </h2>
+                <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                    OCR 模型的识别精度与图像质量密切相关，掌握以下技巧能大幅减少校对时间：
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30">
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1 flex items-center gap-2">
+                        <i class="fas fa-crop text-blue-500 text-xs"></i>
+                        1. 尽量裁剪无关边缘背景
+                    </h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        如果在识别书籍拍照或手机截屏时周围有大量阴影、手指或复杂的杂乱背景，建议先用手机相册裁剪掉边缘空白。这能帮助神经网络更聚焦于正文区域，显著提高识别速度与排版完整度。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30">
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1 flex items-center gap-2">
+                        <i class="fas fa-sun text-amber-500 text-xs"></i>
+                        2. 保证光照均匀、避免过暗或反光
+                    </h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        使用手机拍照纸质文件时，尽量避免台灯单一角度照射产生的严重反光或手持设备投下的浓重阴影。光照越均匀、文字与纸张的对比度越强，检测模型对字形边缘的定位就越精准。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30">
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1 flex items-center gap-2">
+                        <i class="fas fa-arrows-rotate text-emerald-500 text-xs"></i>
+                        3. 保持文字水平或正向朝上
+                    </h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        虽然 PP-OCRv6 具备一定的角度检测容错能力，但当文本发生 90° 旋转或大角度倾斜时，可能会增加字符形变的误判率。在上传前先将图片扶正，准确率将达到最佳。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/30">
+                    <h3 class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-1 flex items-center gap-2">
+                        <i class="fas fa-table text-purple-500 text-xs"></i>
+                        4. 表格单据优先导出为 Excel 进行整理
+                    </h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                        在识别带框线的财务发票、对账单或表格截屏时，直接点击右上角“导出 Excel”，系统会将按行识别出的文本数据规整填入单元格，避免了手动逐项复制粘贴排版的繁琐流程。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 常见问题解答 (FAQ) -->
+        <section class="bg-white dark:bg-zinc-900/90 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xs p-6 md:p-8 space-y-5">
+            <div>
+                <h2 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 flex items-center gap-2">
+                    <i class="fas fa-circle-question text-amber-500 text-base"></i>
+                    常见问题解答 (FAQ)
+                </h2>
+                <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                    关于离线识别、隐私安全与多页 PDF 处理的热门解答：
+                </p>
+            </div>
+
+            <div class="space-y-4 text-xs sm:text-sm">
+                <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60">
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100 mb-1.5 flex items-center gap-2">
+                        <i class="fas fa-lock text-emerald-500 text-xs"></i>
+                        我导入的文件真的不会被任何第三方收集或偷看吗？
+                    </h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        绝对不会。本站是目前全网少有的真正纯客户端本地离线架构在线工具。您可以在按 F12 打开开发者工具并切换到“Network”面板的状态下上传文件并识别，期间没有任何一条向外发送图片或 PDF 数据的网络请求。即使您直接断网或开启飞行模式，工具依然能够完整工作。您的商业合同与个人隐私在物理层面上得到了绝对保障。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60">
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100 mb-1.5 flex items-center gap-2">
+                        <i class="fas fa-file-pdf text-rose-500 text-xs"></i>
+                        多页长篇 PDF 怎么识别？有页数限制吗？
+                    </h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        没有强制页数限制！上传 PDF 后，左侧会激活“PDF 页面控制”面板。您可以点击“上一页/下一页”选择性识别特定页面，也可以点击“一键批量识别所有页面”，系统将自动依次把每一页渲染为高清图像并在本地后台线程中完成识别，最后将全部页面的文字合并供您一键复制或导出。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60">
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100 mb-1.5 flex items-center gap-2">
+                        <i class="fas fa-bolt text-indigo-500 text-xs"></i>
+                        识别速度慢或者浏览器卡顿怎么办？
+                    </h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        本工具的推理运算由独立 Web Worker 后台多线程驱动，通常不会卡死主界面。但识别速度直接取决于当前设备的 CPU 性能。若处理上千万像素的高清大图较慢，可先通过本站的“批量图片转换压缩”工具将原图长宽等比缩减至 1500~2000px，这能在保证识别准确率的同时让处理速度提升 3~5 倍。
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-700/60">
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100 mb-1.5 flex items-center gap-2">
+                        <i class="fas fa-language text-purple-500 text-xs"></i>
+                        支持手写体或古代书法字体识别吗？
+                    </h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        本工具搭载的 PP-OCRv6 针对印刷体、屏幕截图、公文扫描件、招牌横幅有极致的准确率。对于字迹工整清晰的硬笔手写体（如学生作业、会议笔记）具备良好的识别效果；但对于极度连笔、草书或艺术变形字，建议以识别后的人工校对为准。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 关联工具推荐 -->
+        <section class="border-t border-zinc-200 dark:border-zinc-800 pt-8">
+            <h2 class="text-base font-bold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+                <i class="fas fa-cubes text-zinc-400"></i>
+                更多离线隐私在线工具
+            </h2>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <a href="/bg-remover/" class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-darkCard hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+                    <i class="fas fa-id-card text-emerald-500 mb-1.5 text-sm block"></i>
+                    <div class="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-500 transition-colors">证件照换底色</div>
+                    <div class="text-[11px] text-zinc-400 mt-0.5">白底/蓝底智能抠图</div>
+                </a>
+                <a href="/pdf-tools/" class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-darkCard hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+                    <i class="fas fa-file-pdf text-rose-500 mb-1.5 text-sm block"></i>
+                    <div class="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-rose-500 transition-colors">PDF 魔法工具箱</div>
+                    <div class="text-[11px] text-zinc-400 mt-0.5">拆分提取转高清图片</div>
+                </a>
+                <a href="/qr/" class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-darkCard hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+                    <i class="fas fa-qrcode text-amber-500 mb-1.5 text-sm block"></i>
+                    <div class="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">二维码美化工具</div>
+                    <div class="text-[11px] text-zinc-400 mt-0.5">艺术美化与本地解码</div>
+                </a>
+                <a href="/image-converter/" class="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-darkCard hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group">
+                    <i class="fas fa-images text-cyan-500 mb-1.5 text-sm block"></i>
+                    <div class="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-cyan-500 transition-colors">批量图片转换压缩</div>
+                    <div class="text-[11px] text-zinc-400 mt-0.5">JPG/PNG/WEBP 互转</div>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 全局轻量 Toast 提示容器 -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- 页脚 -->
+    <footer class="w-full bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 py-8 px-4 sm:px-6 transition-colors mt-12">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500 dark:text-zinc-400">
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-zinc-900 dark:text-zinc-100">超级工具箱 Pro</span>
+                <span>· 100% 浏览器本地运算，零数据上传</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-4">
+                <a href="/about.html" class="hover:underline">关于我们</a>
+                <a href="/privacy.html" class="hover:underline">隐私政策</a>
+                <a href="/terms.html" class="hover:underline">服务条款</a>
+                <a href="/contact.html" class="hover:underline">联系方式</a>
+                <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="hover:underline">粤ICP备2026017857号</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 交互逻辑初始化脚本 (ES Module) -->
+    <script type="module">
+        import { initOcr, startOcrEngineLazy } from '/js/ocr.js';
+        import { initTheme, toggleTheme } from '/js/utils.js';
+
+        window.toggleTheme = toggleTheme;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            initOcr();
+            // 自动开启离线引擎加载准备
+            startOcrEngineLazy();
+            console.log('[OCR Landing] Initialized successfully.');
+        });
+    </script>
+
+</body>
+</html>

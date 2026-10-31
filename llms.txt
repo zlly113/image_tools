@@ -1,0 +1,39 @@
+# 超级工具箱 Pro (Super Toolbox Pro)
+> 网址: https://www.hhdzai.top
+> 核心定位: 基于现代浏览器 WebAssembly 与神经网络引擎的免费多功能一体化在线工具箱。
+> 隐私承诺: 100% 浏览器本地离线运行，所有图片、PDF、文字处理均在客户端完成，零上传、零服务端数据交互，完全保护用户隐私。
+
+## 核心工具与能力
+
+- **智能证件照制作与抠图 (ID Photo & BG Remover)**
+  - 网址: https://www.hhdzai.top/bg-remover/
+  - 功能: 智能边缘去底，支持替换为白底、蓝底、红底或自定义透明背景；自带边缘容差与取色器微调。纯本地 Canvas 运算，照片绝不上传。
+
+- **离线图片转文字 (PaddleOCR & PDF Text Extraction)**
+  - 网址: https://www.hhdzai.top/ocr/
+  - 功能: 基于 ONNX Runtime Web 与 PaddleOCR 轻量化模型，在浏览器端本地识别图片文字与提取 PDF 文本，支持一键复制与导出 Markdown/TXT/Word/Excel。
+
+- **PDF 魔法工具箱 (PDF Tools Studio)**
+  - 网址: https://www.hhdzai.top/pdf-tools/
+  - 功能: 本地 PDF 页面旋转、按页码提取拆分、整套拆单页打包（ZIP）、高清转 PNG/JPG/WEBP（1x/2x/3x 分辨率）以及防伪平铺水印。
+
+- **二维码工具箱 (QR Code Studio)**
+  - 网址: https://www.hhdzai.top/qr/
+  - 功能: 支持自定义码元样式（圆角、点状、方块）、定位角、前景/背景色与中心 Logo 嵌入；支持上传图片进行本地抗噪解码与识别。
+
+- **批量图片压缩与格式转换 (Batch Image Converter)**
+  - 网址: https://www.hhdzai.top/image-converter/
+  - 功能: 批量调整图片分辨率，支持 JPG、PNG、WEBP 多格式相互转换，画质自由调节，支持多图打包 ZIP 下载。
+
+- **多图排版拼接与 EXIF 水印 (Collage & Watermark)**
+  - 网址: https://www.hhdzai.top/collage/
+  - 功能: 支持多张图片垂直长图拼接、水平横向拼接与智能九宫格网格；支持一键读取相机 EXIF 参数生成徕卡风经典边框水印。
+
+- **高级滤镜与画质增强 (Image Enhancer)**
+  - 网址: https://www.hhdzai.top/#enhancer
+  - 功能: 预设复古胶片、黑白明暗、冷调赛博、暖秋色彩与极度锐丽等滤镜，支持卷积锐化算法修复模糊老照片。
+
+## 技术规格
+- 运行环境: 任何支持 HTML5、WebAssembly 与 Web Workers 的现代浏览器 (Chrome, Edge, Safari, Firefox)
+- 费用: 基础功能完全免费，无强制注册门槛
+- 备案许可: 粤ICP备2026017857号

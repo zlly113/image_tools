@@ -165,7 +165,7 @@ export function switchPdfTab(tabKey) {
         const btn = document.getElementById(`pdf-tab-btn-${key}`);
         if (section) section.classList.add('hidden');
         if (btn) {
-            btn.className = "px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/80 dark:hover:bg-slate-800 flex items-center gap-2 group";
+            btn.className = "px-3.5 py-1.5 rounded-lg font-medium text-xs md:text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors flex items-center gap-1.5";
         }
     });
 
@@ -173,7 +173,7 @@ export function switchPdfTab(tabKey) {
     const activeBtn = document.getElementById(`pdf-tab-btn-${tabKey}`);
     if (activeSection) activeSection.classList.remove('hidden');
     if (activeBtn) {
-        activeBtn.className = "px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 bg-indigo-600 text-white shadow-md shadow-indigo-500/20 flex items-center gap-2 group";
+        activeBtn.className = "px-3.5 py-1.5 rounded-lg font-semibold text-xs md:text-sm bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-xs transition-colors flex items-center gap-1.5";
     }
 }
 
@@ -184,14 +184,14 @@ export function switchOrganizeSubMode(mode) {
         const btn = document.getElementById(`btn-mode-${m}`);
         if (el) el.classList.add('hidden');
         if (btn) {
-            btn.className = "px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800";
+            btn.className = "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800";
         }
     });
     const activeEl = document.getElementById(`pdf-organize-mode-${mode}`);
     const activeBtn = document.getElementById(`btn-mode-${mode}`);
     if (activeEl) activeEl.classList.remove('hidden');
     if (activeBtn) {
-        activeBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-600 dark:bg-slate-800 dark:text-indigo-400 shadow-sm";
+        activeBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-200/80 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-xs transition-colors";
     }
 }
 
@@ -202,14 +202,14 @@ export function switchConvertSubMode(mode) {
         const btn = document.getElementById(`btn-convert-${m}`);
         if (el) el.classList.add('hidden');
         if (btn) {
-            btn.className = "px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800";
+            btn.className = "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800";
         }
     });
     const activeEl = document.getElementById(`pdf-convert-mode-${mode}`);
     const activeBtn = document.getElementById(`btn-convert-${mode}`);
     if (activeEl) activeEl.classList.remove('hidden');
     if (activeBtn) {
-        activeBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-600 dark:bg-slate-800 dark:text-indigo-400 shadow-sm";
+        activeBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-200/80 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-xs transition-colors";
     }
 }
 
@@ -220,14 +220,14 @@ export function switchSecuritySubMode(mode) {
         const btn = document.getElementById(`btn-security-${m}`);
         if (el) el.classList.add('hidden');
         if (btn) {
-            btn.className = "px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800";
+            btn.className = "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800";
         }
     });
     const activeEl = document.getElementById(`pdf-security-mode-${mode}`);
     const activeBtn = document.getElementById(`btn-security-${mode}`);
     if (activeEl) activeEl.classList.remove('hidden');
     if (activeBtn) {
-        activeBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-600 dark:bg-slate-800 dark:text-indigo-400 shadow-sm";
+        activeBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-200/80 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-xs transition-colors";
     }
     updateSecurityPreview();
 }
