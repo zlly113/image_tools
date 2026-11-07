@@ -18,6 +18,15 @@
     <meta name="keywords" content="批量图片压缩, 图片格式转换, JPG转WebP, PNG转JPG, 图片压缩到指定大小, 批量修改分辨率, 在线图片压缩, 批量图片格式互转, 纯本地图片压缩">
     <link rel="canonical" href="https://www.hhdzai.top/image-converter/">
     <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+    <!-- PWA & Mobile Web App Meta -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <meta name="theme-color" content="#4f46e5" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="格式转换">
 
     <!-- Open Graph / SEO -->
     <meta property="og:type" content="website">
@@ -184,6 +193,10 @@
 
     <!-- JSZip 批量打包库 (国内 CDN) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1476528036081443"
+     crossorigin="anonymous"></script>
 </head>
 <body class="bg-zinc-50 text-zinc-800 dark:bg-darkBg dark:text-zinc-200 min-h-screen font-sans flex flex-col transition-colors duration-200">
 
@@ -571,7 +584,8 @@
                 <a href="/privacy.html" class="hover:underline">隐私政策</a>
                 <a href="/terms.html" class="hover:underline">服务条款</a>
                 <a href="/contact.html" class="hover:underline">联系方式</a>
-                <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="hover:underline">粤ICP备2026017857号</a>
+                <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="hover:underline">闽ICP备2026017857号</a>
+                <a href="https://beian.mps.gov.cn/#/query/webSearch?code=35080202351547" target="_blank" rel="noopener noreferrer" class="hover:underline">闽公网安备35080202351547号</a>
             </div>
         </div>
     </footer>
@@ -590,5 +604,8 @@
         });
     </script>
 
+    <!-- 前端埋点与 PWA 离线增强 -->
+    <script type="module" src="/js/tracker.js"></script>
+    <script src="/js/pwa.js"></script>
 </body>
 </html>

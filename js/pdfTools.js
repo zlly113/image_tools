@@ -256,6 +256,9 @@ async function loadPdfForOrganizer(file) {
         
         const loadingTask = window.pdfjsLib.getDocument({
             data: state.organizerBytes.slice(0),
+            cMapUrl: '/models/cmaps/',
+            cMapPacked: true,
+            standardFontDataUrl: '/models/standard_fonts/',
             isEvalSupported: false
         });
         state.organizerDoc = await loadingTask.promise;
@@ -467,6 +470,9 @@ async function handleAddMergeFiles(files) {
             const bytes = await file.arrayBuffer();
             const pdfDoc = await window.pdfjsLib.getDocument({
                 data: bytes.slice(0),
+                cMapUrl: '/models/cmaps/',
+                cMapPacked: true,
+                standardFontDataUrl: '/models/standard_fonts/',
                 isEvalSupported: false
             }).promise;
             state.mergeFiles.push({
@@ -605,6 +611,9 @@ async function loadPdfForSplit(file) {
         state.splitBytes = await file.arrayBuffer();
         const pdfDoc = await window.pdfjsLib.getDocument({
             data: state.splitBytes.slice(0),
+            cMapUrl: '/models/cmaps/',
+            cMapPacked: true,
+            standardFontDataUrl: '/models/standard_fonts/',
             isEvalSupported: false
         }).promise;
         state.splitTotalPages = pdfDoc.numPages;
@@ -717,6 +726,9 @@ async function loadPdfForConvert(file) {
         const arrayBuffer = await file.arrayBuffer();
         state.pdfToImgDoc = await window.pdfjsLib.getDocument({
             data: arrayBuffer,
+            cMapUrl: '/models/cmaps/',
+            cMapPacked: true,
+            standardFontDataUrl: '/models/standard_fonts/',
             isEvalSupported: false
         }).promise;
         state.pdfToImgTotalPages = state.pdfToImgDoc.numPages;
@@ -1018,6 +1030,9 @@ async function loadPdfForSecurity(file) {
         state.securityDoc = await PDFDocument.load(state.securityBytes.slice(0), { updateMetadata: false });
         state.securityPdfjsDoc = await window.pdfjsLib.getDocument({
             data: state.securityBytes.slice(0),
+            cMapUrl: '/models/cmaps/',
+            cMapPacked: true,
+            standardFontDataUrl: '/models/standard_fonts/',
             isEvalSupported: false
         }).promise;
         state.securityTotalPages = state.securityPdfjsDoc.numPages;

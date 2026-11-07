@@ -34,8 +34,13 @@ const AdManager = {
     },
 
     init: async function() {
+        // [Google AdSense 申请准备期]：全站广告暂时屏蔽，确保页面洁净通过 Google 审核
+        const ADS_ENABLED = false;
         const slots = document.querySelectorAll('.ad-slot');
-        if (!slots.length) return;
+        if (!ADS_ENABLED || !slots.length) {
+            slots.forEach(slot => { slot.style.display = 'none'; });
+            return;
+        }
 
         // 获取所有激活广告
         const { data: ads } = await fetchAds();

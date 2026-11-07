@@ -45,53 +45,13 @@ export function updateCreditBadges(balance) {
 }
 
 export async function chargeTool(toolKey, retries = 3) {
-    if (!isLoggedIn()) {
-        showAuthModal('login');
-        throw new Error('请先登录账号后使用');
-    }
-
-    for (let attempt = 0; attempt <= retries; attempt++) {
-        try {
-            const res = await authFetch(`/api/v1/tools/${toolKey}/use`, {
-                method: 'POST'
-            });
-
-            if (res.status === 503) {
-                // D5: 系统繁忙 -> 指数退避 (1s, 2s, 4s)
-                const waitMs = Math.min(2 ** attempt * 1000, 4000);
-                await new Promise(r => setTimeout(r, waitMs));
-                continue;
-            }
-
-            if (res.status === 402) {
-                const errData = await res.json();
-                showRechargeModal(errData.detail || errData);
-                return null;
-            }
-
-            if (res.ok) {
-                const data = await res.json();
-                currentBalance = data.balance;
-                updateCreditBadges(currentBalance);
-                return data; // { status: 'free' | 'charged', balance: ..., remaining_free: ... }
-            }
-
-            const err = await res.json();
-            throw new Error(err.detail || '扣费失败');
-        } catch (e) {
-            if (attempt === retries) throw e;
-        }
-    }
-    throw new Error('系统繁忙，请稍后再试');
+    // 审核期与当前版本：100% 纯本地离线免费，无需登录扣费，零阻断
+    return { status: 'free', balance: 999 };
 }
 
 export function showRechargeModal(detail) {
-    const modal = document.getElementById('rechargeModal');
-    const balEl = document.getElementById('rechargeModalBalance');
-    const reqEl = document.getElementById('rechargeModalRequired');
-    if (balEl && detail) balEl.textContent = detail.balance !== undefined ? detail.balance : currentBalance;
-    if (reqEl && detail) reqEl.textContent = detail.required || 1;
-    if (modal) modal.classList.remove('hidden');
+    // 审核期屏蔽充值弹窗，防止被误判为半成品
+    return;
 }
 
 export function closeRechargeModal() {
@@ -100,10 +60,8 @@ export function closeRechargeModal() {
 }
 
 export function showAuthModal(defaultMode = 'login') {
-    const modal = document.getElementById('userAuthModal');
-    if (!modal) return;
-    modal.classList.remove('hidden');
-    switchAuthFormMode(defaultMode);
+    // 审核期屏蔽登录/注册弹窗，免登录畅用
+    return;
 }
 
 export function closeAuthModal() {

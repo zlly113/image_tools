@@ -29,7 +29,11 @@
     <!-- PWA & Mobile Web App Meta -->
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
-    <link rel="apple-touch-icon" href="/icons/icon.svg">
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="离线OCR">
     <meta name="theme-color" content="#4f46e5" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
 
@@ -167,6 +171,14 @@
                 "@type": "Answer",
                 "text": "因为这是一个真正的离线神经网络模型（包含检测模型 det.tar 与识别模型 rec.tar，合计约 15MB）。首次访问时浏览器需要将模型参数缓存到本地 IndexedDB/Cache 中，后续再次访问时将直接命中本地极速缓存，实现毫秒级启动，不再耗费网络流量。"
               }
+            },
+            {
+              "@type": "Question",
+              "name": "为什么个别 PDF 识别后会出现生僻怪字（如“涛愀椀渀”、“烷”等乱码）？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "这是由于部分 PDF 制作软件在采用传统的 2 字节中文字体（如 STSong-Light、UCS-2）时，正文中混入了 4 字节的彩色 Emoji 表情符号（如 🔴、🟢、⚠️）。浏览器的 PDF 字体解码器在读取 Emoji 时发生 1 个字节的指针偏移，导致后续英文或汉字字节错位，渲染出生僻怪字。秒级解决方案：只需使用电脑截屏工具将该页截取为图片（PNG/JPG）再上传，或者用浏览器的打印功能选择“另存为 PDF”重新导出，即可 100% 恢复正常高精度识别。"
+              }
             }
           ]
         }
@@ -224,6 +236,10 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1476528036081443"
+     crossorigin="anonymous"></script>
 </head>
 <body class="bg-zinc-50 text-zinc-800 dark:bg-darkBg dark:text-zinc-200 min-h-screen font-sans flex flex-col transition-colors duration-200">
 
@@ -375,6 +391,7 @@
                             <li><strong class="text-zinc-700 dark:text-zinc-300">移动端优化</strong>：支持手机与平板访问，超大原图建议先裁剪以降低内存占用。</li>
                             <li><strong class="text-zinc-700 dark:text-zinc-300">智能排版导出</strong>：自动合并段落，可一键直出 TXT、Word 与 Excel。</li>
                             <li><strong class="text-zinc-700 dark:text-zinc-300">运算性能</strong>：识别速度取决于您设备的 CPU 算力与 WebAssembly 多线程执行能力。</li>
+                            <li><strong class="text-amber-600 dark:text-amber-400">遇生僻怪字乱码？</strong>：若 PDF 原文中含有彩色 Emoji 表情（如 🔴/🟢/⚠️），可能因字体规范冲突导致文字错位。遇到该情况只需将该页<strong>截屏保存为图片（PNG/JPG）</strong>再上传，即可 100% 完美识别。</li>
                         </ul>
                     </div>
                 </div>
@@ -639,6 +656,21 @@
                         本工具搭载的 PP-OCRv6 针对印刷体、屏幕截图、公文扫描件、招牌横幅有极致的准确率。对于字迹工整清晰的硬笔手写体（如学生作业、会议笔记）具备良好的识别效果；但对于极度连笔、草书或艺术变形字，建议以识别后的人工校对为准。
                     </p>
                 </div>
+
+                <div class="p-4 rounded-xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-800/60">
+                    <h3 class="font-bold text-zinc-900 dark:text-zinc-100 mb-1.5 flex items-center gap-2">
+                        <i class="fas fa-triangle-exclamation text-amber-500 text-xs"></i>
+                        为什么个别 PDF 识别后会出现生僻怪字（如“涛愀椀渀”、“烷”等乱码）？
+                    </h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed mb-2">
+                        <strong>根本原因：</strong>这是由于部分 PDF 制作软件在采用传统的 2 字节中文字体（如 STSong-Light、UCS-2 编码）时，正文中混入了 4 字节的彩色 Emoji 表情符号（如 🔴、🟢、⚠️）。浏览器的 PDF 字体解码器在读取 Emoji 时发生 1 个字节的指针偏移，导致后续英文或汉字的高低位颠倒，渲染出“生僻字”，而 OCR 引擎会将这些渲染出的字忠实提取出来。
+                    </p>
+                    <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed text-xs">
+                        <strong>秒级解决方案：</strong><br>
+                        1. <strong>直接截图识别（强烈推荐）：</strong> 使用电脑截屏工具将该 PDF 页面截取为一张高清图片（PNG/JPG）拖入本工具，图片不经过 PDF 字体解码，识别率可立即恢复 100% 精准！<br>
+                        2. <strong>虚拟打印转换：</strong> 在 Chrome 或 Edge 浏览器打开该 PDF，按 Ctrl+P 选择【另存为 PDF】重新导出保存一次，浏览器会自动重构字体映射，再次上传即可正常识别。
+                    </p>
+                </div>
             </div>
         </section>
 
@@ -689,7 +721,8 @@
                 <a href="/privacy.html" class="hover:underline">隐私政策</a>
                 <a href="/terms.html" class="hover:underline">服务条款</a>
                 <a href="/contact.html" class="hover:underline">联系方式</a>
-                <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="hover:underline">粤ICP备2026017857号</a>
+                <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="hover:underline">闽ICP备2026017857号</a>
+                <a href="https://beian.mps.gov.cn/#/query/webSearch?code=35080202351547" target="_blank" rel="noopener noreferrer" class="hover:underline">闽公网安备35080202351547号</a>
             </div>
         </div>
     </footer>
@@ -710,5 +743,8 @@
         });
     </script>
 
+    <!-- 前端埋点与 PWA 离线增强 -->
+    <script type="module" src="/js/tracker.js"></script>
+    <script src="/js/pwa.js"></script>
 </body>
 </html>

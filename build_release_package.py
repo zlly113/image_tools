@@ -15,14 +15,28 @@ INCLUDE_PATHS = [
     "contact.html",
     "privacy.html",
     "terms.html",
+    "404.html",
+    "ads.txt",
+    "6f7cc962b251481b98097d955460330c.txt",
+    "llms.txt",
     "robots.txt",
     "sitemap.xml",
     "manifest.json",
     "sw.js",
     "opencv-esm-wrapper.js",
     
+    # 独立落地页工具目录与指南库
+    "bg-remover",
+    "collage",
+    "image-converter",
+    "ocr",
+    "pdf-tools",
+    "qr",
+    "guides",
+
     # 核心脚本与模块
     "js",
+    "libs",
     "admin",
     "server",
     "locales",

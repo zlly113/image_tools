@@ -213,6 +213,8 @@
     "notes_3_desc": ": One-click export to TXT, Word (paragraph preservation), and Excel (table alignment).",
     "notes_4_title": "Speed",
     "notes_4_desc": ": Performance depends on your device's CPU speed. Mobile devices may take several seconds.",
+    "notes_5_title": "Garbled / Rare Characters?",
+    "notes_5_desc": ": If a PDF contains emojis (e.g. 🔴/🟢/⚠️), standard Chinese font mappings may desynchronize. Simply take a screenshot (PNG/JPG) of that page and upload it for 100% accurate OCR.",
     "tab_preview": "Visual Preview",
     "tab_text": "Extracted Text",
     "placeholder_preview": "Upload an image or PDF on the left to start recognition",

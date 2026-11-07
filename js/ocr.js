@@ -301,6 +301,9 @@ async function loadPdf(file) {
         const arrayBuffer = await file.arrayBuffer();
         pdfDoc = await window.pdfjsLib.getDocument({
             data: arrayBuffer,
+            cMapUrl: '/models/cmaps/',
+            cMapPacked: true,
+            standardFontDataUrl: '/models/standard_fonts/',
             isEvalSupported: false
         }).promise;
         totalPdfPages = pdfDoc.numPages;

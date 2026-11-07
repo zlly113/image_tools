@@ -1,10 +1,11 @@
 // sw.js - 超级工具箱 Pro Service Worker
-const CACHE_NAME = 'super-toolbox-cache-v3.4';
+const CACHE_NAME = 'super-toolbox-cache-v3.7';
 
 // 核心预缓存文件清单 (精简高效，不塞入 11MB Worker 文件，秒级完成安装)
 const PRECACHE_ASSETS = [
     '/',
     '/index.html',
+    '/guides/index.html',
     '/bg-remover/index.html',
     '/ocr/index.html',
     '/pdf-tools/index.html',
@@ -18,6 +19,9 @@ const PRECACHE_ASSETS = [
     '/404.html',
     '/manifest.json',
     '/icons/icon.svg',
+    '/icons/icon-192.png',
+    '/icons/icon-512.png',
+    '/icons/apple-touch-icon.png',
     '/opencv-esm-wrapper.js',
     '/libs/docx.umd.js',
     '/libs/xlsx.full.min.js',
@@ -29,6 +33,7 @@ const PRECACHE_ASSETS = [
     '/js/configService.js',
     '/js/adManager.js',
     '/js/tracker.js',
+    '/js/pwa.js',
     '/js/i18n.js',
     '/js/ocr.js',
     '/js/pdfTools.js',
@@ -100,10 +105,17 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // 页面导航请求：网络优先，断网降级为本地缓存的 index.html
+    // 页面导航请求：网络优先，断网降级为本地缓存对应的独立落地页或根目录 index.html
     if (req.mode === 'navigate') {
         event.respondWith(
-            fetch(req).catch(() => caches.match('/index.html'))
+            fetch(req).catch(async () => {
+                const cachedPage = await caches.match(req);
+                if (cachedPage) return cachedPage;
+                const pathname = url.pathname.endsWith('/') ? url.pathname + 'index.html' : url.pathname + '/index.html';
+                const cachedSubpage = await caches.match(pathname);
+                if (cachedSubpage) return cachedSubpage;
+                return caches.match('/index.html');
+            })
         );
         return;
     }

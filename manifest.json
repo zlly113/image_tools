@@ -1,44 +1,63 @@
 {
-  "name": "超级工具箱 Pro - 多功能一体化在线工具平台",
+  "name": "超级工具箱 Pro - 纯本地离线隐私安全在线工具箱",
   "short_name": "超级工具箱",
-  "description": "纯本地浏览器运行的在线多功能工具平台，提供 OCR 文字识别、智能抠图、相片排版、批量压缩转换、画质增强、二维码美化等功能，100% 保护用户隐私。",
-  "start_url": "/index.html",
+  "description": "纯本地浏览器运行的在线多功能工具平台，提供离线 OCR 文字识别、智能证件照抠图换底、长图拼接排版、批量压缩转换与二维码美化，100% 保护隐私。",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
+  "background_color": "#09090b",
   "theme_color": "#4f46e5",
   "orientation": "any",
   "lang": "zh-CN",
   "categories": ["utilities", "productivity", "photo"],
   "icons": [
     {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
       "src": "/icons/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ],
   "shortcuts": [
     {
       "name": "文字识别 (OCR)",
-      "short_name": "OCR",
-      "description": "离线本地高精度 OCR 文字与 PDF 提取",
-      "url": "/index.html#ocr",
-      "icons": [{ "src": "/icons/icon.svg", "sizes": "any" }]
+      "short_name": "文字识别",
+      "description": "离线本地高精度 OCR 文字与多页 PDF 提取",
+      "url": "/ocr/",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "智能抠图",
-      "short_name": "去底色",
-      "description": "智能提取与快速替换证件照背景",
-      "url": "/index.html#bg-remover",
-      "icons": [{ "src": "/icons/icon.svg", "sizes": "any" }]
+      "name": "证件照智能换底色",
+      "short_name": "证件抠图",
+      "description": "一寸二寸智能抠图换白底蓝底红底",
+      "url": "/bg-remover/",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "二维码工具",
+      "name": "PDF 魔法工具箱",
+      "short_name": "PDF工具",
+      "description": "PDF 拆分、合并、单页提取与高质量转图片",
+      "url": "/pdf-tools/",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "二维码工具箱",
       "short_name": "二维码",
-      "description": "美化二维码生成与多通道识别",
-      "url": "/index.html#link-tools",
-      "icons": [{ "src": "/icons/icon.svg", "sizes": "any" }]
+      "description": "美化艺术二维码生成与图片本地解码",
+      "url": "/qr/",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

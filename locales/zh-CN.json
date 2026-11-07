@@ -213,6 +213,8 @@
     "notes_3_desc": "：支持将识别结果一键导出为 TXT、Word（自动还原段落）和 Excel（自动对齐表格）。",
     "notes_4_title": "识别速度",
     "notes_4_desc": "：处理速度取决于您当前设备的 CPU 性能，手机端可能需要等待数秒至十几秒，请耐心等待。",
+    "notes_5_title": "遇生僻怪字乱码？",
+    "notes_5_desc": "：若 PDF 原文含彩色 Emoji（如 🔴/🟢/⚠️），可能触发底层中文字体错位。遇到此情况建议将该页截屏为图片（PNG/JPG）后上传，识别率即可达 100%。",
     "tab_preview": "可视化预览",
     "tab_text": "提取的文本",
     "placeholder_preview": "请在左侧上传图片或 PDF 进行识别",
